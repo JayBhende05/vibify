@@ -17,6 +17,15 @@ providers: [
       if(!params.user){
         return false
       }
+
+      const existingUser = await prismaClient.user.findFirst({
+        where :{
+          email : params?.user?.email ?? ""
+        }
+      })
+      if(existingUser){
+        return true
+      }
       await  prismaClient.user.create({
         data : {
           email : params?.user?.email ?? "",
