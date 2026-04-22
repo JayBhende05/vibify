@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,6 +11,9 @@ model Stream {
   type        StreamType
   url         String
   extractedId String
+  title       String    @default("")
+  sThumbnail  String    @default("")
+  bThumbnail  String    @default("")
   active      Boolean    @default(true)
   userId      String
   User        User       @relation(fields: [userId], references: [id])
@@ -19,7 +21,7 @@ model Stream {
 }
 
 model Upvote {
-  id          String
+  id          String    @id @default(uuid())
   userId      String
   streamId    String
   Stream      Stream    @relation(fields: [streamId], references: [id])
@@ -30,7 +32,7 @@ model Upvote {
 
 model User {
   id        String      @id @default(uuid())
-  email     String
+  email     String      @unique
   name      String
   provider  Provider
   Stream    Stream[]
