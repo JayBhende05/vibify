@@ -15,13 +15,21 @@ import {
 } from "lucide-react";
 import  FeatureCard  from "@/components/FeatureCards";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import useUserSession from "@/store/userSession";
 
-interface LandingPageProps {
-  onLogin: () => void;
-}
 
-export default function LandingPage({ onLogin }: LandingPageProps) {
+
+
+
+export default function LandingPage() {
   const router = useRouter();
+  const {data: session} = useSession();
+  const userId = useUserSession((state) => state.userId)
+
+  console.log("User session data is at homme [age" , session?.user)
+  console.log("USer id set at store ", userId);
+
   return (
     <div className="min-h-screen bg-background text-white selection:bg-brand/30 overflow-x-hidden font-sans">
       {/* Navigation */}
@@ -80,7 +88,7 @@ export default function LandingPage({ onLogin }: LandingPageProps) {
           className="flex flex-col sm:flex-row items-center gap-4"
         >
           <button
-            onClick={onLogin}
+            // onClick={}
             className="px-10 py-4 bg-brand-gradient rounded-full font-bold text-lg hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-brand/40 flex items-center gap-3"
           >
             Start Listening <Play className="w-5 h-5 fill-current" />

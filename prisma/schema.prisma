@@ -6,41 +6,92 @@ datasource db {
   provider = "postgresql"
 }
 
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String
+  provider     Provider
+
+  streams      Stream[]
+  upvotes      Upvote[]
+  hostedRooms  Room[]        @relation("HostedRooms")
+  participants Participant[] @relation("UserParticipants")
+}
+
+
+model Room {
+  id     String @id @default(uuid())
+  name   String
+  hostId String
+  host   User   @relation("HostedRooms", fields: [hostId], references: [id])
+  participants Participant[]
+  streams   Stream[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
 model Stream {
   id          String     @id @default(uuid())
   type        StreamType
   url         String
   extractedId String
-  title       String    @default("")
-  sThumbnail  String    @default("")
-  bThumbnail  String    @default("")
-  active      Boolean    @default(true)
-  userId      String
-  User        User       @relation(fields: [userId], references: [id])
-  Upvote      Upvote[]
+  title       String?
+  sThumbnail  String?
+  bThumbnail  String?
+
+  active Boolean @default(true)
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  addedById String
+  addedBy   User     @relation(fields: [addedById], references: [id])
+  upvotes   Upvote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roomId, extractedId])
 }
 
 model Upvote {
-  id          String    @id @default(uuid())
-  userId      String
-  streamId    String
-  Stream      Stream    @relation(fields: [streamId], references: [id])
-  User        User      @relation(fields: [userId], references: [id])
+  id String @id @default(uuid())
+
+  userId   String
+  streamId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  stream Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 
   @@unique([userId, streamId])
 }
 
-model User {
-  id        String      @id @default(uuid())
-  email     String      @unique
-  name      String
-  provider  Provider
-  Stream    Stream[]
-  Upvote    Upvote[]
+model Participant {
+  id       String   @id @default(uuid())
+  userId   String
+  roomId   String
+  role     Role     @default(USER)
+  joinedAt DateTime @default(now())
+
+  user User @relation("UserParticipants", fields: [userId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
+  @@index([roomId])
+}
+
+enum Role {
+  HOST
+  USER
 }
 
 enum Provider {
   Google
+  Credentials
 }
 
 enum StreamType {

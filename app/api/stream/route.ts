@@ -1,5 +1,5 @@
 import { prismaClient } from "@/lib/db";
-import { createStreamSchema } from "@/schemas/stream/stream.create";
+import { createStreamSchema } from "@/types/stream/stream.create";
 import { NextRequest, NextResponse } from "next/server";
 import youtubesearchapi from "youtube-search-api";
 
