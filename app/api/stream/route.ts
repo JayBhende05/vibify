@@ -7,7 +7,9 @@ const YTREGEX = /(?:v=|youtu\.be\/|shorts\/)([^&#?/]+)/;
 
 export async function POST(req: NextRequest) {
   try {
+    // console.log(req)
     const body = await req.json();
+    console.log(body)
     const result = createStreamSchema.safeParse(body);
 
     if (!result.success) {
@@ -38,9 +40,23 @@ export async function POST(req: NextRequest) {
     const bigThumbnail = sorted[sorted.length - 1];
     console.log(smallThumbnail )
 
+    const existingStream = await prismaClient.stream.findFirst({
+      where : {
+        extractedId : extractedId,
+        roomId : data.roomId
+      }
+    })
+
+    if(existingStream){
+      return NextResponse.json({
+      message: "Stream Already Exists",
+    });
+    }
+
     await prismaClient.stream.create({
       data: {
-        userId: data.creatorId,
+        addedById: data.creatorId,
+        roomId: data.roomId,
         url: data.url,
         extractedId,
         type: "Youtube",

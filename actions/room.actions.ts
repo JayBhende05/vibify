@@ -1,8 +1,13 @@
 "use server"
 
+import { authOptions } from "@/lib/auth";
 import { prismaClient } from "@/lib/db";
 import { CreateRoomInput, createRoomSchema } from "@/types/room/createRoom";
 import { JoinRoomInput, joinRoomSchema } from "@/types/room/joinRoom";
+import { error } from "console";
+import { data } from "framer-motion/client";
+import { getServerSession } from "next-auth";
+import { hostname } from "os";
 import { success } from "zod";
 // import { success } from "zod";
 
@@ -62,6 +67,7 @@ async function createRoom(
 
 async function joinRoom(data: JoinRoomInput, userId: string) {
   try {
+    console.log("Join Romm Data", data)
     const parsed = joinRoomSchema.safeParse(data);
 
     if (!parsed.success) {
@@ -137,4 +143,73 @@ async function joinRoom(data: JoinRoomInput, userId: string) {
   }
 }
 
-export { createRoom, joinRoom }
+
+ async function getRoomDetails(roomId :any){
+  try {
+    const user = await getServerSession(authOptions)
+
+     if(!user){
+      return {
+        success : false,
+        error : "Login Again"
+      }
+    }
+
+    if(!roomId){
+      return {
+        success : false,
+        error : "Room Id Missing"
+      }
+    }
+
+    const room = await prismaClient.room.findFirst({
+      where : {
+        id : roomId
+      }
+    })
+
+    if(!room){
+      return{
+        success : false,
+        error : "Incorrect Room Id"
+      }
+    }
+
+    if(room.hostId){
+      let host = await prismaClient.user.findFirst({
+        where : {
+          id : room.hostId
+        }
+      })
+    
+      return {
+        success : true,
+      roomId : room.id,
+      roomName : room.name,
+      hostId : room.hostId,
+      hostName : host?.name,
+ 
+      }
+    }
+
+
+   
+    return {
+      success : true,
+      roomId : room.id,
+      roomName : room.name,
+      hostId : room.hostId,
+      hostname : ""
+    }
+  } catch (error) {
+    console.error("Join Room Error:", error);
+
+    return {
+      success: false,
+      error: "Something went wrong"
+    };
+  }
+}
+
+
+export { createRoom, joinRoom, getRoomDetails }

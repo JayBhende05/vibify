@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import useUserSession from "@/store/userSession";
+import useUserSession from "@/store/useUserStore";
 
 export default  function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);

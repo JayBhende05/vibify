@@ -1,11 +1,12 @@
+"use client"
 import { main } from 'framer-motion/client';
 import { Search } from 'lucide-react'
-import { getServerSession } from 'next-auth'
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import React from 'react'
 
-async function Header() {
-  const session = await getServerSession();
+function Header() {
+  // const session = await getServerSession();
+  const { data: session, status} = useSession()
 
   function handleLogin (){
     signIn("google", { callbackUrl : "/"})
@@ -25,7 +26,7 @@ async function Header() {
             />
           </div>
           <div className="flex items-center gap-4">
-             {session ? (
+             {session?.user ? (
                <div className="flex items-center gap-4">
                  <div className="text-right hidden sm:block">
                    <p className="text-sm font-medium tracking-tight">{session.user?.name}</p>

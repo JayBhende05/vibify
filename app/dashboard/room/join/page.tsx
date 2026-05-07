@@ -8,10 +8,12 @@ import { useForm } from "react-hook-form";
 import { JoinRoomInput, joinRoomSchema } from "@/types/room/joinRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { joinRoom } from "@/actions/room.actions";
+import useUserStore from "@/store/useUserStore";
 
 export default function JoinRoom() {
   const router = useRouter();
   const { data: session } = useSession();
+  const setUserRole = useUserStore((state) => state.setUserRole);
   const {
     register,
     handleSubmit,
@@ -31,11 +33,11 @@ export default function JoinRoom() {
     const res = await joinRoom(data, session?.user.id!);
 
     if (!res.success) {
-      setError(res.error?.toString() || "Failed to create room");
+      setError(res.error?.toString() || "Failed to Join room");
       setLoading(false);
       return;
     }
-
+    setUserRole(res?.role || "");
     router.push(`/dashboard/room/${res.roomId}`);
     setLoading(false);
   };

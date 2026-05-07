@@ -16,7 +16,7 @@ import {
 import  FeatureCard  from "@/components/FeatureCards";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import useUserSession from "@/store/userSession";
+import useUserSession from "@/store/useUserStore";
 
 
 
