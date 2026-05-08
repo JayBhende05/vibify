@@ -20,7 +20,7 @@ export default  function LoginPage() {
 
   const onSubmit = async (data: any) => {
     const res = await signIn("credentials", {
-      callbackUrl: "/",
+      callbackUrl: "/dashboard",
       email: data.email,
       name: data.name,
     });
@@ -119,7 +119,7 @@ export default  function LoginPage() {
         <motion.button
           whileTap={{ scale: 0.97 }}
           whileHover={{ scale: 1.02 }}
-          onClick={() => signIn("google", { callbackUrl: "/" })}
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           className="w-full flex items-center justify-center gap-3 py-3 rounded-xl bg-white text-black font-medium hover:bg-white/90 transition"
         >
           Sign in with Google

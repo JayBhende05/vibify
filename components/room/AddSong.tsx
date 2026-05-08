@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRoomDetails } from "@/store/room";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 // import { param } from "framer-motion/client";
 
 type FormValues = {
@@ -22,11 +22,12 @@ export default function AddSong({roomId } ) {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>();
 
   const url = watch("url");
-
+const router = useRouter()
   async function onSubmit(data: FormValues) {
     console.log("FORM SUBMITTED:", data);
 
@@ -53,6 +54,7 @@ export default function AddSong({roomId } ) {
       });
 
       console.log("✅ API success:", res.data);
+      reset()
     } catch (err) {
       console.error("❌ API error:", err);
     }

@@ -74,7 +74,7 @@ console.log("Data in prosp is ", songs)
         </div>
       </div>
 
-      <div className="space-y-4 h-fit">
+      <div className="space-y-4 overflow-y-auto max-h-full pr-2 custom-scrollbar">
         <AnimatePresence mode="popLayout" initial={false}>
           {songs.map((song, index) => (
             <motion.div

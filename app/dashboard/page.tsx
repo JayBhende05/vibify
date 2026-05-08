@@ -1,16 +1,25 @@
-"use client"
-import React from 'react'
-import DashboardLayout from './layout'
-import { useSession } from 'next-auth/react'
+"use server"
 
-function page() {
-  const {data: session} = useSession();
+import { getJoinedRooms, getRoomDetails, getRoomsCreated } from '@/actions/room.actions'
+import { getUploadedSongs } from '@/actions/streams.action';
+import Home from '@/components/dashboard/Home'
+import React from 'react'
+
+
+async function page() {
   
+  const creadedRooms = await getRoomsCreated();
+  const joinedRooms = await getJoinedRooms();
+  const uploadedSongs = await getUploadedSongs();
   return (
     <>
-<div>Home page</div>
-
-      {session?.user.id}
+    <Home
+    
+          createdRooms={creadedRooms.rooms} 
+          joinedRooms={joinedRooms.rooms}
+          uploadedSongs={uploadedSongs.songs}
+          />
+      
     </>
   )
 }
