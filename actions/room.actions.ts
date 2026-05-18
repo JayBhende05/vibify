@@ -8,7 +8,17 @@ import { RoomsResponse } from "@/types";
 
 import { getServerSession } from "next-auth";
 
-
+type RoomFromDB  = {
+ id: string;
+  name: string;
+  hostId: string;
+  host: {
+    name: string;
+  };
+  _count: {
+    participants: number;
+  };
+};
 
 async function createRoom(
   data: CreateRoomInput,
@@ -164,7 +174,7 @@ async function getRoomsCreated(session : any) : Promise<RoomsResponse>
     return {
       success: true,
 
-      rooms: rooms.map((room) => ({
+      rooms: rooms.map((room : RoomFromDB) => ({
         roomId: room.id,
         roomName: room.name,
         hostId: room.hostId,
@@ -180,6 +190,20 @@ async function getRoomsCreated(session : any) : Promise<RoomsResponse>
       error: "Something went wrong",
     };
   }
+}
+
+interface JoinedRoomsQuery {
+  room: {
+    id: string;
+    name: string;
+    hostId: string;
+    host: {
+      name: string;
+    };
+    _count: {
+      participants: number;
+    };
+  };
 }
 
 async function getJoinedRooms(session : any) : Promise<RoomsResponse> {
@@ -225,7 +249,7 @@ async function getJoinedRooms(session : any) : Promise<RoomsResponse> {
     return {
       success: true,
 
-      rooms: joinedRooms.map((item) => ({
+      rooms: joinedRooms.map((item : JoinedRoomsQuery) => ({
         roomId: item.room.id,
         roomName: item.room.name,
         hostId: item.room.hostId,
