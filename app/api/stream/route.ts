@@ -152,15 +152,18 @@ export async function POST(req: NextRequest) {
 
     const snippet = video.snippet;
 
-    const thumbnails = snippet?.thumbnails || {};
-    const thumbList = Object.values(thumbnails);
+ const thumbnails = snippet?.thumbnails;
 
-    const sorted = thumbList
-      .filter((t: any) => t?.url)
-      .sort((a: any, b: any) => (a.width || 0) - (b.width || 0));
+const smallThumbnail =
+  thumbnails?.medium?.url ??
+  thumbnails?.default?.url ??
+  "";
 
-    const smallThumbnail = sorted[0]?.url ?? "";
-    const bigThumbnail = sorted[sorted.length - 1]?.url ?? "";
+const bigThumbnail =
+  thumbnails?.maxres?.url ??
+  thumbnails?.high?.url ??
+  thumbnails?.medium?.url ??
+  "";
 
     const existingStream = await prismaClient.stream.findFirst({
       where: {
