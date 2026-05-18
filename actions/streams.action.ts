@@ -12,13 +12,9 @@ interface GetUploadedSong {
   url: string;
 }
 
-interface SessionUser {
-  user?: {
-    id?: string;
-  };
-}
 
-export async function getUploadedSongs(session: SessionUser): Promise<GetUploadedSongResponse> {
+
+export async function getUploadedSongs(session: any): Promise<GetUploadedSongResponse> {
   try {
 
     if (!session?.user?.id) {
