@@ -5,12 +5,23 @@ import { error } from "console";
 import { getServerSession } from "next-auth"
 import { success } from "zod";
 
+interface GetUploadedSong {
+  id: string;
+  sThumbnail: string | null;
+  title: string | null;
+  url: string;
+}
 
-export async function getUploadedSongs(session: any) : Promise<GetUploadedSongResponse> {
+interface SessionUser {
+  user?: {
+    id?: string;
+  };
+}
+
+export async function getUploadedSongs(session: SessionUser): Promise<GetUploadedSongResponse> {
   try {
-    
 
-    if (!session?.user.id) {
+    if (!session?.user?.id) {
       return {
         success: false,
         error: "Login Again",
@@ -40,7 +51,7 @@ export async function getUploadedSongs(session: any) : Promise<GetUploadedSongRe
     return {
       success: true,
 
-      songs: songs.map((item) => ({
+      songs: songs.map((item: GetUploadedSong) => ({
         id: item.id,
         sThumbnail: item.sThumbnail,
         title: item.title,
