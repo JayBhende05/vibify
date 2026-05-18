@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Copy, Check, ExternalLink, Link } from 'lucide-react';
-// import { Song } from '../types';
+import {  UploadedSong } from '@/types';
 
-// interface UploadedLinkProps {
-//   song: Song;
-// }
+interface UploadedLinkProps {
+  song: UploadedSong 
+}
 
-export default function UploadedLink({ song }) {
+export default function UploadedLink({ song }: UploadedLinkProps ) {
   const [copied, setCopied] = useState(false);
 
   const copyLink = () => {
@@ -19,7 +19,7 @@ export default function UploadedLink({ song }) {
     <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/[0.08] transition-all group">
       <div className="flex items-center gap-4 min-w-0">
         <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-white/10 flex-shrink-0">
-          <img src={song.sThumbnail} alt="" className="w-full h-full object-cover" />
+          <img src={song?.sThumbnail || ""} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
             {/* <Link className="w-5 h-5 text-white" /> */}
           </div>

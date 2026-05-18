@@ -1,5 +1,3 @@
-// "use client"
-
 import RoomHeader from "@/components/room/Header";
 
 import { getRoomDetails } from "@/actions/room.actions";
@@ -7,7 +5,8 @@ import AddSong from "@/components/room/AddSong";
 import SongQueue from "@/components/room/SongQueue";
 import { getSong } from "@/actions/song.action";
 import NowPlaying from "@/components/room/NowPlaying";
-// import { useRoomDetails } from '@/store/room';
+
+import type { GetSongResponse, Song } from "@/types";
 
 export default async function Page({
   params,
@@ -17,10 +16,13 @@ export default async function Page({
   const { roomId } = await params;
 
   const roomDetails = await getRoomDetails(roomId);
-  const Songs = await getSong(roomId);
 
-  const sortedSongs = [...Songs.songs].sort(
-    (a, b) => (b?._count?.upvotes ?? 0) - (a?._count?.upvotes ?? 0)
+  const Songs: GetSongResponse = await getSong(roomId);
+
+  const songList: Song[] = Songs.success ? Songs.songs : [];
+
+  const sortedSongs = [...songList].sort(
+    (a, b) => (b._count?.upvotes ?? 0) - (a._count?.upvotes ?? 0)
   );
 
   const currentSong = sortedSongs[0];
@@ -28,12 +30,9 @@ export default async function Page({
 
   return (
     <div className="flex flex-col gap-8 p-8">
-      {/* Room Header */}
       <RoomHeader room={roomDetails} />
 
-      {/* Main Grid */}
       <div className="grid grid-cols-12 gap-8">
-        {/* Left/Main Section */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
           <NowPlaying song={currentSong} user={{ role: "host" }} />
 

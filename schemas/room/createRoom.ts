@@ -8,3 +8,4 @@ export const createRoomSchema = z.object({
 
 
 export type CreateRoomInput = z.infer<typeof createRoomSchema>;
+

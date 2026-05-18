@@ -1,5 +1,10 @@
 import {create} from "zustand"
-export const useRoomDetails = create((set)=>({
+
+interface RoomDetailsState {
+  roomDetails : any,
+  setRoomDetails :(data : object) => void;
+}
+export const useRoomDetails = create<RoomDetailsState>((set)=>({
  roomDetails : null,
  setRoomDetails : (data : object) => set({roomDetails : data})
 }))

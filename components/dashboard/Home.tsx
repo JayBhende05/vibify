@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import DashboardLayout from './layout'
+// import DashboardLayout from './layout'
 import { useSession } from 'next-auth/react'
 
 import { Plus, Users, History, TrendingUp, Sparkles } from 'lucide-react';
@@ -9,17 +9,15 @@ import UploadedLink from '@/components/dashboard/UploadedLink';
 // import { Room, Song, User } from '../types';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import type { Song, Room, UploadedSong} from '@/types'
 
-// interface HomeProps {
-//   user: User;
-//   createdRooms: Room[];
-//   joinedRooms: Room[];
-//   uploadedSongs: Song[];
-//   onEnterRoom: (roomId: string) => void;
-//   onCreateRoom: () => void;
-// }
+interface HomeProps {
+  createdRooms: Room[];
+  joinedRooms: Room[];
+  uploadedSongs: UploadedSong[]
+}
 
-export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
+export default function Home({ createdRooms, joinedRooms, uploadedSongs} : HomeProps)  {
 
   const {data: session , status} = useSession();
   const router = useRouter();
@@ -31,7 +29,7 @@ export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
     )
   }
 
-  function onEnterRoom(roomId){
+  function onEnterRoom(roomId : string){
       router.push(`/dashboard/room/${roomId}`)
   }
 
@@ -130,10 +128,10 @@ export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {joinedRooms.map(room => (
                 <RoomCard 
-                  key={room.id} 
+                  key={room.roomId} 
                   room={room} 
                   role="participant" 
-                  onClick={() => onEnterRoom(room.id)}
+                  onClick={() => onEnterRoom(room.roomId)}
                 />
               ))}
             </div>

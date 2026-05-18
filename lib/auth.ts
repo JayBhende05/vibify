@@ -34,6 +34,15 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
+         if (!user) {
+          return null;
+        }
+
+        // if (!user.password) {
+        //   throw new Error("Login with Google");
+        // }
+
+
         if (!user) {
           user = await prismaClient.user.create({
             data: {

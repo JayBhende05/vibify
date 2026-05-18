@@ -1,13 +1,14 @@
 import { authOptions } from "@/lib/auth"
 import { prismaClient } from "@/lib/db";
+import { GetUploadedSongResponse } from "@/types";
 import { error } from "console";
 import { getServerSession } from "next-auth"
 import { success } from "zod";
 
 
-export async function getUploadedSongs() {
+export async function getUploadedSongs(session: any) : Promise<GetUploadedSongResponse> {
   try {
-    const session = await getServerSession(authOptions);
+    
 
     if (!session?.user.id) {
       return {

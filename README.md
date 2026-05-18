@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vibify 🎵
 
-## Getting Started
+A collaborative real-time music streaming platform where users can create rooms, join shared music sessions, upload songs, and control playback through community voting.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Vibify is a modern collaborative music room application built to create an interactive shared listening experience.
+Users can create or join music rooms, upload songs, vote on tracks, and enjoy synchronized playback with other participants in real time.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The platform focuses on community-driven music streaming where the queue is dynamically managed based on user upvotes and downvotes.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Features
 
-To learn more about Next.js, take a look at the following resources:
+### 🔐 Authentication
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* Secure user authentication using **NextAuth**
+* Sign in using credentials-based authentication
+* Session management and protected routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🏠 Homepage
 
-## Deploy on Vercel
+* Modern landing page with application overview
+* “Get Started” flow routing users directly to authentication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 📊 Dashboard
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+After signing in, users can access their personalized dashboard containing:
+
+* Rooms created by the user
+* Rooms joined by the user
+* Previously streamed/uploaded songs
+* Quick navigation to room management features
+
+### 🎧 Music Rooms
+
+Users can:
+
+* Create new music rooms
+* Join existing rooms
+* Collaborate with other users in real-time
+
+### 👑 Host Controls
+
+Room hosts have additional permissions such as:
+
+* Play songs from the queue
+* Delete songs from the playlist
+* Manage room music flow
+
+### 📤 Song Upload System
+
+* Users can upload songs to the room queue
+* Shared collaborative playlist experience
+
+### 👍 Community Voting System
+
+All users in a room can:
+
+* Upvote songs
+* Downvote songs
+
+Songs with higher votes get prioritized in the playback queue, creating a community-driven music experience.
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* Next.js
+* TypeScript
+* Tailwind CSS
+
+### Backend
+
+* Next.js API Routes
+* Prisma ORM
+* PostgreSQL
+
+### Authentication
+
+* NextAuth.js
+
+### Validation & Utilities
+
+* Zod
+
+---
+
+## ⚙️ Application Flow
+
+1. User lands on the homepage
+2. Clicks on **Get Started**
+3. Redirected to Sign In page
+4. Authenticates using credentials or NextAuth providers
+5. Accesses personalized dashboard
+6. Creates or joins a room
+7. Uploads songs and interacts with the queue
+8. Users vote on songs
+9. Songs are played based on community voting priority
+
+---
+
+## 📌 Core Functionalities
+
+* Real-time collaborative music rooms
+* Authentication & authorization
+* Dynamic song queue management
+* Role-based room controls
+* Interactive voting mechanism
+* User-centric dashboard experience
+
+---
+
+## 🔮 Future Enhancements
+
+* Real-time socket integration
+* Live chat inside rooms
+* Spotify/YouTube API integration
+* Queue synchronization improvements
+* Music recommendations using AI
+* Friend system and invitations
+* Room privacy settings
+
+---
+
+## 📷 Project Preview
+
+*Add screenshots or GIFs here*
+
+---
+
+## 🧑‍💻 Author
+
+Developed by **Jay Bhende** using modern full-stack technologies and collaborative streaming concepts.

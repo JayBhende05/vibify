@@ -13,7 +13,7 @@ type FormValues = {
   url: string;
 };
 
-export default function AddSong({roomId } ) {
+export default function AddSong({roomId } : {roomId : string}  ) {
   const [isExpanding, setIsExpanding] = useState(false);
   
   console.log("Room id in add song", roomId )

@@ -2,16 +2,17 @@
 
 import { authOptions } from "@/lib/auth"
 import { prismaClient } from "@/lib/db"
+import { GetSongResponse  } from "@/types"
 import { getServerSession } from "next-auth"
 import { success } from "zod"
 // import { success } from "zod"
 
-export async function getSong(roomId:string) {
+export async function getSong(roomId:string):  Promise<GetSongResponse > {
   try {
       if(!roomId){
         return {
           success : false,
-          erroe : "Room Id Missing"
+          error : "Room Id Missing"
         }
       }
 
@@ -45,6 +46,7 @@ export async function getSong(roomId:string) {
       // console.log("Song Data is ", songs);
 
       return {
+        success : true,
         songs : songs
       }
 

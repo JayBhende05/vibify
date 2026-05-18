@@ -146,8 +146,17 @@ import {
 
 import { useRouter } from "next/navigation";
 import { removeSong } from "@/actions/song.action";
+import { Song } from "@/types";
 
-export default function NowPlaying({ song, user }) {
+interface NowPlayingProps {
+  song?: Song;
+
+  user: {
+    role: "host" | "listener";
+  };
+}
+
+export default function NowPlaying({ song, user }: NowPlayingProps) {
   const [showPlayer, setShowPlayer] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
@@ -157,7 +166,7 @@ export default function NowPlaying({ song, user }) {
   const router = useRouter();
 
   const handleSkip = async () => {
-    await removeSong(song.id);
+    await removeSong(song?.id || "");
     router.refresh();
   };
 
@@ -212,7 +221,7 @@ export default function NowPlaying({ song, user }) {
       {!showPlayer ? (
         <>
           <img
-            src={song.sThumbnail}
+            src={song?.sThumbnail   || ""}
             alt="HeroBackground"
             className="absolute inset-0 w-full h-full object-cover"
           />
@@ -300,9 +309,9 @@ export default function NowPlaying({ song, user }) {
                 <p className="text-white font-bold text-sm">
                   {song.title}
                 </p>
-                <p className="text-white/60 text-xs">
+                {/* <p className="text-white/60 text-xs">
                   {song.artist}
-                </p>
+                </p> */}
               </div>
             </div>
 

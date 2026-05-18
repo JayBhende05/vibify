@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { Music, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {createRoom} from "@/actions/room.actions";
-import { CreateRoomInput, createRoomSchema } from "@/types/room/createRoom";
+import { CreateRoomInput, createRoomSchema } from "@/schemas/room/createRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 
