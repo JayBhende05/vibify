@@ -2,14 +2,12 @@
 
 import { authOptions } from "@/lib/auth";
 import { prismaClient } from "@/lib/db";
-import { CreateRoomInput, createRoomSchema } from "@/types/room/createRoom";
-import { JoinRoomInput, joinRoomSchema } from "@/types/room/joinRoom";
-import { error } from "console";
-import { data } from "framer-motion/client";
+import { CreateRoomInput, createRoomSchema } from "@/schemas/room/createRoom";
+import { JoinRoomInput, joinRoomSchema } from "@/schemas/room/joinRoom";
+import { RoomsResponse } from "@/types";
+
 import { getServerSession } from "next-auth";
-import { hostname } from "os";
-import { success } from "zod";
-// import { success } from "zod";
+
 
 
 async function createRoom(
@@ -127,11 +125,12 @@ async function getRoomDetails(roomId: any) {
   }
 }
 
-async function getRoomsCreated() {
+async function getRoomsCreated(session : any) : Promise<RoomsResponse> 
+  {
   try {
-    const user = await getServerSession(authOptions);
+  
 
-    if (!user?.user.id) {
+    if (!session?.user.id) {
       return {
         success: false,
         error: "Login Again",
@@ -140,7 +139,7 @@ async function getRoomsCreated() {
 
     const rooms = await prismaClient.room.findMany({
       where: {
-        hostId: user.user.id,
+        hostId: session.user.id,
       },
 
       select: {
@@ -183,9 +182,9 @@ async function getRoomsCreated() {
   }
 }
 
-async function getJoinedRooms() {
+async function getJoinedRooms(session : any) : Promise<RoomsResponse> {
   try {
-    const session = await getServerSession(authOptions);
+    
 
     if (!session?.user.id) {
       return {

@@ -19,7 +19,7 @@ function Sidebar() {
 
   return (
     <>
-      {/* Mobile Topbar */}
+      
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#0F1117]/95 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-4 z-50">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 bg-brand-gradient rounded-xl flex items-center justify-center shadow-lg shadow-brand/20">
@@ -39,7 +39,7 @@ function Sidebar() {
         </button>
       </div>
 
-      {/* Mobile Overlay */}
+     
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
@@ -47,7 +47,6 @@ function Sidebar() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`
           fixed lg:sticky top-0 left-0
@@ -61,7 +60,7 @@ function Sidebar() {
           lg:translate-x-0
         `}
       >
-        {/* Header */}
+    
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-3 group cursor-pointer">
             <div className="w-10 h-10 bg-brand-gradient rounded-xl flex items-center justify-center shadow-lg shadow-brand/20 group-hover:scale-110 transition-transform">
@@ -74,7 +73,7 @@ function Sidebar() {
             </div>
           </div>
 
-          {/* Close Button */}
+          
           <button
             onClick={() => setIsOpen(false)}
             className="lg:hidden p-2 rounded-lg hover:bg-white/10 text-white/70"
@@ -83,7 +82,7 @@ function Sidebar() {
           </button>
         </div>
 
-        {/* Navigation */}
+       
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
           <div>
             <p className="text-[10px] uppercase tracking-[0.25em] text-white/30 mb-4 px-2">
@@ -112,7 +111,7 @@ function Sidebar() {
           </div>
         </div>
 
-        {/* Auth Button */}
+        
         <div className="pt-6 border-t border-white/10 mt-auto">
           {data?.user ? (
             <button

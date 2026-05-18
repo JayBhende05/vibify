@@ -1,25 +1,21 @@
 "use client"
-import React from 'react'
-import DashboardLayout from './layout'
+
 import { useSession } from 'next-auth/react'
 
 import { Plus, Users, History, TrendingUp, Sparkles } from 'lucide-react';
 import RoomCard from '@/components/dashboard/RoomCard';
 import UploadedLink from '@/components/dashboard/UploadedLink';
-// import { Room, Song, User } from '../types';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import type { Song, Room, UploadedSong} from '@/types'
 
-// interface HomeProps {
-//   user: User;
-//   createdRooms: Room[];
-//   joinedRooms: Room[];
-//   uploadedSongs: Song[];
-//   onEnterRoom: (roomId: string) => void;
-//   onCreateRoom: () => void;
-// }
+interface HomeProps {
+  createdRooms: Room[];
+  joinedRooms: Room[];
+  uploadedSongs: UploadedSong[]
+}
 
-export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
+export default function Home({ createdRooms, joinedRooms, uploadedSongs} : HomeProps)  {
 
   const {data: session , status} = useSession();
   const router = useRouter();
@@ -31,7 +27,7 @@ export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
     )
   }
 
-  function onEnterRoom(roomId){
+  function onEnterRoom(roomId : string){
       router.push(`/dashboard/room/${roomId}`)
   }
 
@@ -41,7 +37,6 @@ export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
   
   return (
     <div className="max-w-7xl mx-auto px-8 py-12">
-      {/* Welcome Hero */}
       <section className="mb-16 relative p-12 rounded-[3rem] overflow-hidden border border-white/5 bg-gradient-to-br from-brand/20 via-surface to-surface">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/4"></div>
         <div className="relative z-10 max-w-2xl">
@@ -78,9 +73,7 @@ export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
       </section>
 
       <div className="grid grid-cols-12 gap-12">
-        {/* Left Side: Rooms */}
         <div className="col-span-12 lg:col-span-8 space-y-16">
-          {/* Created Rooms */}
           <section>
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
@@ -114,7 +107,6 @@ export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
             </div>
           </section>
 
-          {/* Participated Rooms */}
           <section>
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
@@ -130,17 +122,16 @@ export default function Home({ createdRooms, joinedRooms, uploadedSongs}) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {joinedRooms.map(room => (
                 <RoomCard 
-                  key={room.id} 
+                  key={room.roomId} 
                   room={room} 
                   role="participant" 
-                  onClick={() => onEnterRoom(room.id)}
+                  onClick={() => onEnterRoom(room.roomId)}
                 />
               ))}
             </div>
           </section>
         </div>
 
-        {/* Right Side: Upload History */}
         <aside className="col-span-12 lg:col-span-4">
           <div className="sticky top-10">
             <div className="flex items-center gap-4 mb-8">

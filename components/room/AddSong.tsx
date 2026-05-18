@@ -6,14 +6,13 @@ import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRoomDetails } from "@/store/room";
 import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
-// import { param } from "framer-motion/client";
+import {  useRouter } from "next/navigation";
 
 type FormValues = {
   url: string;
 };
 
-export default function AddSong({roomId } ) {
+export default function AddSong({roomId } : {roomId : string}  ) {
   const [isExpanding, setIsExpanding] = useState(false);
   
   console.log("Room id in add song", roomId )

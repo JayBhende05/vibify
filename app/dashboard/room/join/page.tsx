@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Hash, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { JoinRoomInput, joinRoomSchema } from "@/types/room/joinRoom";
+import { JoinRoomInput, joinRoomSchema } from "@/schemas/room/joinRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { joinRoom } from "@/actions/room.actions";
 import useUserStore from "@/store/useUserStore";

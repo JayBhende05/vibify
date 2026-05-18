@@ -1,46 +1,26 @@
 "use client";
 import React from "react";
 import { ArrowBigUp, Music, Trash2, Disc } from "lucide-react";
-// import { Song, User } from '../types';
+
 import { motion, AnimatePresence } from "framer-motion";
 import useUserStore from "@/store/useUserStore";
 import { removeSong, upvoteSong } from "@/actions/song.action";
 import { useRouter } from "next/navigation";
-export interface Song {
-  title: string | null;
-  id: string;
-  sThumbnail: string | null;
-  roomId: string;
-  url: string;
-  extractedId: string;
-  bThumbnail: string | null;
-  active: boolean;
-  addedById: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Song } from "@/types";
 
-export interface User {
-  id: string;
-  displayName: string;
-  photoURL: string;
-  role: "host" | "participant";
-}
+
+
 interface SongQueueProps {
   songs: Song[];
-  user: User;
-  onVote: (songId: string) => void;
-  onRemove?: (songId: string) => void;
   currentSongId?: string;
   isPlaying?: boolean;
 }
 
 export default function SongQueue({
   songs,
-
   currentSongId,
   isPlaying,
-}) {
+} : SongQueueProps) {
 
   const router = useRouter();
   const userRole = useUserStore((state) => state.role);
@@ -94,11 +74,11 @@ console.log("Data in prosp is ", songs)
                 </span>
 
                 <div className="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 shadow-2xl group-hover:shadow-brand/20 transition-all border border-white/10">
-                  <img
+                  {song.sThumbnail && song.title  && (<img
                     src={song.sThumbnail}
                     alt={song.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
+                  />)}
                   {currentSongId === song.id && isPlaying && (
                     <div className="absolute inset-0 bg-brand/40 flex items-center justify-center backdrop-blur-[2px]">
                       <Disc className="w-8 h-8 text-white animate-spin-slow" />
@@ -117,9 +97,7 @@ console.log("Data in prosp is ", songs)
                     {song.title}
                   </p>
                   <div className="flex items-center gap-2 overflow-hidden">
-                    {/* <p className="text-sm text-white/40 font-bold truncate group-hover:text-white/60 transition-colors uppercase tracking-widest text-[10px]">
-                      {song.artist}
-                    </p> */}
+                    
                     <span className="w-1 h-1 bg-white/20 rounded-full flex-shrink-0"></span>
                     <p className="text-[10px] text-white/20 font-medium truncate italic">
                       Added by {song?.addedBy.name}

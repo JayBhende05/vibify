@@ -5,19 +5,27 @@ import { getUploadedSongs } from '@/actions/streams.action';
 import Home from '@/components/dashboard/Home'
 import React from 'react'
 
+import type {
+  RoomsResponse,
+  GetUploadedSongResponse,
+} from "@/types";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 async function page() {
+  const session = await getServerSession(authOptions)
   
-  const creadedRooms = await getRoomsCreated();
-  const joinedRooms = await getJoinedRooms();
-  const uploadedSongs = await getUploadedSongs();
+  const createdRooms : RoomsResponse = await getRoomsCreated(session);
+  const joinedRooms: RoomsResponse = await getJoinedRooms(session);
+  const uploadedSongs : GetUploadedSongResponse  = await getUploadedSongs(session);
   return (
     <>
     <Home
     
-          createdRooms={creadedRooms.rooms} 
-          joinedRooms={joinedRooms.rooms}
-          uploadedSongs={uploadedSongs.songs}
+          createdRooms={createdRooms.success ? createdRooms.rooms : []} 
+          joinedRooms={joinedRooms.success ? joinedRooms.rooms : []}
+
+          uploadedSongs={uploadedSongs.success ? uploadedSongs.songs : []}
           />
       
     </>

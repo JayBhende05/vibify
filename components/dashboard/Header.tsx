@@ -5,7 +5,7 @@ import { signIn, useSession } from 'next-auth/react';
 import React from 'react'
 
 function Header() {
-  // const session = await getServerSession();
+  
   const { data: session, status} = useSession()
 
   function handleLogin (){
