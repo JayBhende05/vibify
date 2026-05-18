@@ -130,7 +130,7 @@ Songs with higher votes get prioritized in the playback queue, creating a commun
 
 ## 📷 Project Preview
 
-*Add screenshots or GIFs here*
+![Vibify Home](./public/assets/01.png)
 
 ---
 
