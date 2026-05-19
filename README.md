@@ -134,7 +134,7 @@ Songs with higher votes get prioritized in the playback queue, creating a commun
 ![Vibify Home](./public/assets/01.png)
 
 ## User Dashbaord
-![Vibify Dashboard](./public/assets/01.png)
+![Vibify Dashboard](./public/assets/02.png)
 
 ## Room Dashbaord
 ![Vibify Room Dashbaord](./public/assets/03.png)
