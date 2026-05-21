@@ -1,12 +1,14 @@
 "use server"
-
 import { authOptions } from "@/lib/auth"
 import { prismaClient } from "@/lib/db"
-import { GetSongResponse  } from "@/types"
+import { GetSongResponse } from "@/schemas/songs/getSong"
+import { RemoveSongResponse } from "@/schemas/songs/removeSong"
+import { UpvoteSongResponse } from "@/schemas/songs/upvoteSong"
+
 import { getServerSession } from "next-auth"
 
 
-export async function getSong(roomId:string):  Promise<GetSongResponse > {
+export async function getSong(roomId:string):  Promise<GetSongResponse> {
   try {
       if(!roomId){
         return {
@@ -63,13 +65,13 @@ export async function getSong(roomId:string):  Promise<GetSongResponse > {
 }
 
 
-export async function upvoteSong(songId : string){
+export async function upvoteSong(songId : string) : Promise<UpvoteSongResponse>{
   try {
 
        if(!songId){
         return {
           success : false,
-          erroe : "Song Id Missing"
+          error : "Song Id Missing"
         }
       }
 
@@ -96,7 +98,7 @@ export async function upvoteSong(songId : string){
   }
 }
 
-export async function removeSong(songId : string){
+export async function removeSong(songId : string) : Promise<RemoveSongResponse>{
   try {
     if(!songId){
       return {

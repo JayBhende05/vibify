@@ -2,9 +2,11 @@
 
 import { authOptions } from "@/lib/auth";
 import { prismaClient } from "@/lib/db";
-import { CreateRoomInput, createRoomSchema } from "@/schemas/room/createRoom";
-import { JoinRoomInput, joinRoomSchema } from "@/schemas/room/joinRoom";
-import { RoomsResponse } from "@/types";
+import { CreateRoomInput, CreateRoomResponse, createRoomSchema } from "@/schemas/room/createRoom";
+import { JoinedRoomResponse } from "@/schemas/room/getJoinedRooms";
+import { GetRoomDetailsResponse } from "@/schemas/room/getRoomDetails";
+import { GetRoomsCreatedResponse } from "@/schemas/room/getRoomsCreated";
+import { JoinRoomInput, joinRoomInputSchema, JoinRoomResponse, joinRoomSchema } from "@/schemas/room/joinRoom";
 
 import { getServerSession } from "next-auth";
 
@@ -23,7 +25,7 @@ type RoomFromDB  = {
 async function createRoom(
   data: CreateRoomInput,
   userId: string
-) {
+) : Promise<CreateRoomResponse> {
   try {
     const parsed = createRoomSchema.safeParse(data);
 
@@ -71,7 +73,7 @@ async function createRoom(
   }
 }
 
-async function getRoomDetails(roomId: any) {
+async function getRoomDetails(roomId: string): Promise<GetRoomDetailsResponse> {
   try {
     const user = await getServerSession(authOptions)
 
@@ -102,13 +104,8 @@ async function getRoomDetails(roomId: any) {
       }
     }
 
-    if (!room.hostId) {
-      return {
-        success: true,
-        error: "Host Id is undefined"
-      }
-    }
-    let host = await prismaClient.user.findFirst({
+    
+    const host = await prismaClient.user.findFirst({
       where: {
         id: room.hostId
       }
@@ -119,7 +116,7 @@ async function getRoomDetails(roomId: any) {
       roomId: room.id,
       roomName: room.name,
       hostId: room.hostId,
-      hostName: host?.name,
+      hostName: host?.name || "Host" ,
 
     }
 
@@ -135,7 +132,7 @@ async function getRoomDetails(roomId: any) {
   }
 }
 
-async function getRoomsCreated(session : any) : Promise<RoomsResponse> 
+async function getRoomsCreated(session : any) : Promise<GetRoomsCreatedResponse> 
   {
   try {
   
@@ -206,7 +203,7 @@ interface JoinedRoomsQuery {
   };
 }
 
-async function getJoinedRooms(session : any) : Promise<RoomsResponse> {
+async function getJoinedRooms(session : any) : Promise<JoinedRoomResponse> {
   try {
     
 
@@ -267,10 +264,11 @@ async function getJoinedRooms(session : any) : Promise<RoomsResponse> {
   }
 }
 
-async function joinRoom(data: JoinRoomInput, userId: string) {
+
+async function joinRoom(data: JoinRoomInput, userId: string) : Promise<JoinRoomResponse> {
   try {
     console.log("Join Room Data", data)
-    const parsed = joinRoomSchema.safeParse(data);
+    const parsed = joinRoomInputSchema.safeParse(data);
 
     if (!parsed.success) {
       return {
@@ -313,7 +311,7 @@ async function joinRoom(data: JoinRoomInput, userId: string) {
     if (existing) {
       return {
         success: true,
-        roomId: room.id,
+        roomId: room?.id || " ",
         participantId: existing.id,
         role: isHost ? "HOST" : "USER",
         alreadyJoined: true

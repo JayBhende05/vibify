@@ -1,5 +1,6 @@
 
-import {z} from 'zod';
+
+import {success, z} from 'zod';
 
 
 export const createRoomSchema = z.object({
@@ -7,4 +8,18 @@ export const createRoomSchema = z.object({
 })
 
 
+export const createRoomResponseSchema = z.discriminatedUnion("success", [
+  z.object({
+    success : z.literal(true),
+    roomId : z.string(),
+    participantId : z.string()
+  }),
+  z.object({
+    success : z.literal(false),
+    error: z.union([z.string(), z.any()])
+  })
+])
+
+
 export type CreateRoomInput = z.infer<typeof createRoomSchema>;
+export type CreateRoomResponse = z.infer<typeof createRoomResponseSchema>

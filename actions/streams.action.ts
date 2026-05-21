@@ -1,5 +1,6 @@
 import { prismaClient } from "@/lib/db";
-import { GetUploadedSongResponse } from "@/types";
+import { GetUploadedSongResponse, UploadedSongQuery } from "@/schemas/stream/getUploadedSongs";
+// import { GetUploadedSongResponse } from "@/types";
 
 
 export async function getUploadedSongs(session: any) : Promise<GetUploadedSongResponse> {
@@ -36,7 +37,7 @@ export async function getUploadedSongs(session: any) : Promise<GetUploadedSongRe
     return {
       success: true,
 
-      songs: songs.map((item) => ({
+      songs: songs.map((item : UploadedSongQuery) => ({
         id: item.id,
         sThumbnail: item.sThumbnail,
         title: item.title,
