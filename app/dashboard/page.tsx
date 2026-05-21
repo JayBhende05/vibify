@@ -21,10 +21,8 @@ async function page() {
   return (
     <>
     <Home
-    
           createdRooms={createdRooms.success ? createdRooms.rooms : []} 
           joinedRooms={joinedRooms.success ? joinedRooms.rooms : []}
-
           uploadedSongs={uploadedSongs.success ? uploadedSongs.songs : []}
           />
       

@@ -33,8 +33,7 @@ console.log(room);
           <div className="w-1 h-1 bg-white/20 rounded-full"></div>
           <div className="flex items-center gap-1.5">
             <Users className="w-4 h-4" />
-            {/* <span>{rooom.activeUsers || "+99"} curating</span> */}
-            {/* <span>{ "+99"} curating</span> */}
+          
           </div>
         </div>
       </div>

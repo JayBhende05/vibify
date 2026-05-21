@@ -32,7 +32,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-white selection:bg-brand/30 overflow-x-hidden font-sans">
-      {/* Navigation */}
+    
       <nav className="fixed top-0 left-0 right-0 h-20 flex items-center justify-between px-8 md:px-16 z-50 bg-background/50 backdrop-blur-xl border-b border-white/5">
         <div className="flex items-center gap-2 group cursor-pointer">
           <div className="w-8 h-8 bg-brand-gradient rounded-lg flex items-center justify-center shadow-lg shadow-brand/20">
@@ -49,7 +49,7 @@ export default function LandingPage() {
         </button>
       </nav>
 
-      {/* Hero Section */}
+    
       <section className="relative pt-40 pb-20 px-8 flex flex-col items-center text-center max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -88,7 +88,7 @@ export default function LandingPage() {
           className="flex flex-col sm:flex-row items-center gap-4"
         >
           <button
-            // onClick={}
+             onClick={() => router.push("/auth/login")}
             className="px-10 py-4 bg-brand-gradient rounded-full font-bold text-lg hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-brand/40 flex items-center gap-3"
           >
             Start Listening <Play className="w-5 h-5 fill-current" />
@@ -98,7 +98,7 @@ export default function LandingPage() {
           </button>
         </motion.div>
 
-        {/* Floating Preview Image */}
+        
         <motion.div
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
@@ -115,7 +115,7 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* Features Grid */}
+      
       <section className="py-24 px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard
@@ -136,12 +136,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
+     
       <footer className="py-12 border-t border-white/5 text-center text-white/20 text-xs tracking-widest uppercase font-bold">
         &copy; 2024 Vibify Audio Systems. All Rights Reserved.
       </footer>
 
-      {/* Background Ambient Glows */}
+     
       <div className="fixed top-0 right-0 w-[800px] h-[800px] bg-brand/5 blur-[120px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4"></div>
       <div className="fixed bottom-0 left-0 w-[600px] h-[600px] bg-pink-500/5 blur-[120px] rounded-full pointer-events-none translate-y-1/2 -translate-x-1/4"></div>
     </div>
@@ -150,6 +150,3 @@ export default function LandingPage() {
 
 
 
-{
-  /* <Navbar/> */
-}

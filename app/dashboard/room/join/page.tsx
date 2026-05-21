@@ -44,13 +44,13 @@ export default function JoinRoom() {
 
   return (
     <div className="max-w-xl mx-auto mt-10 bg-white/5 border border-white/10 rounded-2xl p-8 shadow-lg">
-      {/* Header */}
+   
       <div className="flex items-center gap-2 mb-6">
         <Hash className="w-5 h-5 text-brand" />
         <h1 className="text-xl font-bold">Join a Room</h1>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Room Code */}
+   
         <div className="mb-4">
           <label className="text-xs text-white/60">Room Code / Link</label>
           <input
@@ -61,10 +61,10 @@ export default function JoinRoom() {
           />
         </div>
 
-        {/* Error */}
+     
         {error && <p className="text-xs text-red-400 mb-3">{error}</p>}
 
-        {/* Button */}
+  
         <button
           type="submit"
           disabled={loading}

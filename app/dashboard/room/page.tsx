@@ -9,18 +9,17 @@ export default function DashboardHome() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  // CREATE ROOM
   const [roomName, setRoomName] = useState("");
   const [userNameCreate, setUserNameCreate] = useState("");
 
-  // JOIN ROOM
+
   const [roomCode, setRoomCode] = useState("");
   const [userNameJoin, setUserNameJoin] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // CREATE ROOM
+  
   const handleCreateRoom = async () => {
     if (!roomName.trim()) return setError("Room name required");
     if (!session?.user && !userNameCreate.trim())
@@ -51,7 +50,7 @@ export default function DashboardHome() {
     }
   };
 
-  // JOIN ROOM
+
   const handleJoinRoom = async () => {
     if (!roomCode.trim()) return setError("Room code required");
     if (!userNameJoin.trim() && !session?.user)
@@ -85,7 +84,7 @@ export default function DashboardHome() {
   return (
     <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mt-10">
       
-      {/* CREATE ROOM */}
+   
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <Plus className="w-5 h-5 text-brand" />
@@ -116,7 +115,7 @@ export default function DashboardHome() {
         </button>
       </div>
 
-      {/* JOIN ROOM */}
+     
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <Hash className="w-5 h-5 text-brand" />
