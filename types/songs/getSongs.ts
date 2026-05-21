@@ -76,12 +76,12 @@ export type Song = {
    Song Response
 ========================= */
 
-export type GetSongResponse =
-  | {
-      success: false;
-      error: string;
-    }
-  | {
-      success: true;
-      songs: Song[];
-    };
+// export type GetSongResponse =
+//   | {
+//       success: false;
+//       error: string;
+//     }
+//   | {
+//       success: true;
+//       songs: Song[];
+//     };

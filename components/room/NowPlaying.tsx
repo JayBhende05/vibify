@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import React, { useRef, useState } from "react";
@@ -18,19 +16,47 @@ import {
 import { useRouter } from "next/navigation";
 import { removeSong } from "@/actions/song.action";
 import { Song } from "@/types";
+import { strict } from "assert";
+
+type PlayingSuccess = {
+    id: string;
+    type: "Youtube" | "Spotify";
+    roomId: string;
+    url: string;
+    extractedId: string;
+    sThumbnail: string | null;
+    bThumbnail: string | null;
+    active: boolean;
+    addedById: string;
+    createdAt: Date;
+    updatedAt: Date;
+    addedBy: {
+      id: string;
+      name: string;
+      email: string;
+      provider: "Google" | "Credentials";
+    };
+    _count: {
+      upvotes: number;
+    };
+    title?: string | null | undefined;
+ 
+};
+interface UserRole{
+  role : "host" | "listener"
+}
+type User = "host" | "listener"
+
 
 interface NowPlayingProps {
-  song?: Song;
-
-  user: {
-    role: "host" | "listener";
-  };
+  song?: PlayingSuccess;
+  user: UserRole
 }
 
 export default function NowPlaying({ song, user }: NowPlayingProps) {
-  const [showPlayer, setShowPlayer] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [showPlayer, setShowPlayer] = useState<Boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<Boolean>(true);
+  const [isMuted, setIsMuted] = useState<Boolean>(false);
 
   const playerRef = useRef<any>(null);
 
@@ -92,7 +118,7 @@ export default function NowPlaying({ song, user }: NowPlayingProps) {
       {!showPlayer ? (
         <>
           <img
-            src={song?.sThumbnail   || ""}
+            src={song?.sThumbnail || ""}
             alt="HeroBackground"
             className="absolute inset-0 w-full h-full object-cover"
           />
@@ -177,10 +203,7 @@ export default function NowPlaying({ song, user }: NowPlayingProps) {
               )}
 
               <div className="ml-4">
-                <p className="text-white font-bold text-sm">
-                  {song.title}
-                </p>
-                
+                <p className="text-white font-bold text-sm">{song.title}</p>
               </div>
             </div>
 

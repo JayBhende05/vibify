@@ -21,8 +21,8 @@ export default function CreateRoom() {
   });
   const router = useRouter();
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>("");
 
   const onSubmit = async (data: any) => {
     setLoading(true);

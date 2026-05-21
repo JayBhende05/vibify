@@ -5,18 +5,18 @@ import { getUploadedSongs } from '@/actions/streams.action';
 import Home from '@/components/dashboard/Home'
 import React from 'react'
 
-import type {
-  RoomsResponse,
-  GetUploadedSongResponse,
-} from "@/types";
+
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { GetRoomsCreatedResponse } from '@/schemas/room/getRoomsCreated';
+import { JoinedRoomResponse } from '@/schemas/room/getJoinedRooms';
+import { GetUploadedSongResponse } from '@/schemas/stream/getUploadedSongs';
 
 async function page() {
   const session = await getServerSession(authOptions)
   
-  const createdRooms : RoomsResponse = await getRoomsCreated(session);
-  const joinedRooms: RoomsResponse = await getJoinedRooms(session);
+  const createdRooms : GetRoomsCreatedResponse = await getRoomsCreated(session);
+  const joinedRooms: JoinedRoomResponse = await getJoinedRooms(session);
   const uploadedSongs : GetUploadedSongResponse  = await getUploadedSongs(session);
   return (
     <>

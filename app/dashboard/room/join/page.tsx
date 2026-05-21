@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Hash, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { JoinRoomInput, joinRoomSchema } from "@/schemas/room/joinRoom";
+import { JoinRoomInput, joinRoomInputSchema } from "@/schemas/room/joinRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { joinRoom } from "@/actions/room.actions";
 import useUserStore from "@/store/useUserStore";
@@ -19,11 +19,11 @@ export default function JoinRoom() {
     handleSubmit,
     formState: { errors },
   } = useForm<JoinRoomInput>({
-    resolver: zodResolver(joinRoomSchema),
+    resolver: zodResolver(joinRoomInputSchema),
   });
-  const [userName, setUserName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [userName, setUserName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const onSubmit = async (data: any) => {
     setError("");

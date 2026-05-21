@@ -1,11 +1,20 @@
 
 import React from 'react';
 import { Users, ArrowRight } from 'lucide-react';
-import { Room } from '@/types';
+// import { Room } from '@/types';
+
+interface Room {
+    roomId: string;
+    roomName: string;
+    hostId: string;
+    hostName: string;
+    activeUsers: number;
+}
+type Role = 'host' | 'participant'
 
 interface RoomCardProps {
   room: Room;
-  role: 'host' | 'participant';
+  role: Role;
   onClick: () => void;
 }
 

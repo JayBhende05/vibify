@@ -7,12 +7,27 @@ import RoomCard from '@/components/dashboard/RoomCard';
 import UploadedLink from '@/components/dashboard/UploadedLink';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import type { Song, Room, UploadedSong} from '@/types'
+
+
+interface Roomprops{
+  roomId: string;
+    roomName: string;
+    hostId: string;
+    hostName: string;
+    activeUsers: number;
+}
+
+interface UploadSongProps{
+   id: string;
+        sThumbnail: string | null;
+        title: string | null;
+        url: string;
+}
 
 interface HomeProps {
-  createdRooms: Room[];
-  joinedRooms: Room[];
-  uploadedSongs: UploadedSong[]
+  createdRooms: Roomprops[];
+  joinedRooms: Roomprops[];
+  uploadedSongs: UploadSongProps[]
 }
 
 export default function Home({ createdRooms, joinedRooms, uploadedSongs} : HomeProps)  {

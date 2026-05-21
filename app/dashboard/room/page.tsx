@@ -10,15 +10,15 @@ export default function DashboardHome() {
   const { data: session } = useSession();
 
   // CREATE ROOM
-  const [roomName, setRoomName] = useState("");
-  const [userNameCreate, setUserNameCreate] = useState("");
+  const [roomName, setRoomName] = useState<string >("");
+  const [userNameCreate, setUserNameCreate] = useState<string>("");
 
   // JOIN ROOM
-  const [roomCode, setRoomCode] = useState("");
-  const [userNameJoin, setUserNameJoin] = useState("");
+  const [roomCode, setRoomCode] = useState<string>("");
+  const [userNameJoin, setUserNameJoin] = useState<string>("");
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   // CREATE ROOM
   const handleCreateRoom = async () => {

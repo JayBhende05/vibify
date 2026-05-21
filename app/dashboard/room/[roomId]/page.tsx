@@ -5,8 +5,10 @@ import AddSong from "@/components/room/AddSong";
 import SongQueue from "@/components/room/SongQueue";
 import { getSong } from "@/actions/song.action";
 import NowPlaying from "@/components/room/NowPlaying";
+import { GetSongResponse, Songs } from "@/schemas/songs/getSong";
+import { GetRoomDetailsResponse } from "@/schemas/room/getRoomDetails";
 
-import type { GetSongResponse, Song } from "@/types";
+
 
 export default async function Page({
   params,
@@ -15,11 +17,11 @@ export default async function Page({
 }) {
   const { roomId } = await params;
 
-  const roomDetails = await getRoomDetails(roomId);
+  const roomDetails : GetRoomDetailsResponse = await getRoomDetails(roomId);
 
   const Songs: GetSongResponse = await getSong(roomId);
 
-  const songList: Song[] = Songs.success ? Songs.songs : [];
+  const songList: Songs[] = Songs.success ? Songs.songs : [];
 
   const sortedSongs = [...songList].sort(
     (a, b) => (b._count?.upvotes ?? 0) - (a._count?.upvotes ?? 0)

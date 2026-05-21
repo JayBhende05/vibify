@@ -8,10 +8,31 @@ import { removeSong, upvoteSong } from "@/actions/song.action";
 import { useRouter } from "next/navigation";
 import { Song } from "@/types";
 
-
+type Songs = { id: string;
+    type: "Youtube" | "Spotify";
+    roomId: string;
+    url: string;
+    extractedId: string;
+    sThumbnail: string | null;
+    bThumbnail: string | null;
+    active: boolean;
+    addedById: string;
+    createdAt: Date;
+    updatedAt: Date;
+    addedBy: {
+      id: string;
+      name: string;
+      email: string;
+      provider: "Google" | "Credentials";
+    };
+    _count: {
+      upvotes: number;
+    };
+    title?: string | null | undefined;
+ }
 
 interface SongQueueProps {
-  songs: Song[];
+  songs: Songs[];
   currentSongId?: string;
   isPlaying?: boolean;
 }
