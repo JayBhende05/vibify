@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Participant {
+  id       String   @id
+  userId   String
+  roomId   String
+  role     Role     @default(USER)
+  joinedAt DateTime @default(now())
+  Room     Room     @relation(fields: [roomId], references: [id])
+  User     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, roomId])
+  @@index([roomId])
+}
+
+model Room {
+  id          String        @id
+  name        String
+  hostId      String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime
+  Participant Participant[]
+  User        User          @relation(fields: [hostId], references: [id])
+  Stream      Stream[]
+}
+
+model Stream {
+  id          String     @id
+  type        StreamType
+  active      Boolean    @default(true)
+  extractedId String
+  url         String
+  bThumbnail  String?
+  sThumbnail  String?
+  title       String?
+  addedById   String
+  createdAt   DateTime   @default(now())
+  roomId      String
+  updatedAt   DateTime
+  User        User       @relation(fields: [addedById], references: [id])
+  Room        Room       @relation(fields: [roomId], references: [id])
+  Upvote      Upvote[]
+
+  @@unique([roomId, extractedId])
+}
+
+model Upvote {
+  id        String   @id
+  userId    String
+  streamId  String
+  createdAt DateTime @default(now())
+  Stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, streamId])
+}
+
+model User {
+  id          String        @id
+  email       String        @unique
+  name        String
+  provider    Provider
+  Participant Participant[]
+  Room        Room[]
+  Stream      Stream[]
+  Upvote      Upvote[]
+}
+
+enum Provider {
+  Google
+  Credentials
+}
+
+enum Role {
+  HOST
+  USER
+}
+
+enum StreamType {
+  Youtube
+  Spotify
+}

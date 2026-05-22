@@ -1,14 +1,34 @@
 import express from 'express'
-import type {Request, Response} from 'express'
-
+import http from 'http'
+import WebSocket, { WebSocketServer } from 'ws'
+import roomRoutes from './routes/roomRoutes.js'
+import dotenv from "dotenv"
 
 const app = express() 
+dotenv.config({ path : "'./../.env"})
+app.use(express.json());
 
-app.get("/rr", (req : Request,res : Response)=>{
-res.send("Working Properly")
+app.use('/room', roomRoutes );
+
+const server  =  http.createServer(app);
+
+const wss = new WebSocketServer({server});
+
+wss.on("connection", (ws)=>{
+  ws.on("error", console.error);
+
+  ws.on('message', (msg) =>{
+    console.log("Message Received" , msg.toString());
+  })
+
+  ws.on('close',()=>{
+    console.log("Client Disconneted");
+  })
+
+  ws.send("Hello Message from WebSocket Server")
 })
 
-app.listen(3004,()=>{
-  console.log("SERver is listening on port 3004")
-}
-)
+
+server.listen(8080, ()=>{
+  console.log("Server is listening on Port 8080")
+})
