@@ -6,75 +6,82 @@ datasource db {
   provider = "postgresql"
 }
 
-model Participant {
-  id       String   @id
-  userId   String
-  roomId   String
-  role     Role     @default(USER)
-  joinedAt DateTime @default(now())
-  Room     Room     @relation(fields: [roomId], references: [id])
-  User     User     @relation(fields: [userId], references: [id])
 
-  @@unique([userId, roomId])
-  @@index([roomId])
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String
+  provider     Provider
+
+  streams      Stream[]
+  upvotes      Upvote[]
+  hostedRooms  Room[]        @relation("HostedRooms")
+  participants Participant[] @relation("UserParticipants")
 }
+
 
 model Room {
-  id          String        @id
-  name        String
-  hostId      String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime
-  Participant Participant[]
-  User        User          @relation(fields: [hostId], references: [id])
-  Stream      Stream[]
+  id     String @id @default(uuid())
+  name   String
+  hostId String    
+  host   User   @relation("HostedRooms", fields: [hostId], references: [id])
+  participants Participant[]
+  streams   Stream[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
+
 model Stream {
-  id          String     @id
+  id          String     @id @default(uuid())
   type        StreamType
-  active      Boolean    @default(true)
-  extractedId String
   url         String
-  bThumbnail  String?
-  sThumbnail  String?
+  extractedId String
   title       String?
-  addedById   String
-  createdAt   DateTime   @default(now())
-  roomId      String
-  updatedAt   DateTime
-  User        User       @relation(fields: [addedById], references: [id])
-  Room        Room       @relation(fields: [roomId], references: [id])
-  Upvote      Upvote[]
+  sThumbnail  String?
+  bThumbnail  String?
+
+  active Boolean @default(true)
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  addedById String
+  addedBy   User     @relation(fields: [addedById], references: [id])
+  upvotes   Upvote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([roomId, extractedId])
 }
 
 model Upvote {
-  id        String   @id
-  userId    String
-  streamId  String
+  id String @id @default(uuid())
+
+  userId   String
+  streamId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  stream Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
-  Stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
-  User      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, streamId])
 }
 
-model User {
-  id          String        @id
-  email       String        @unique
-  name        String
-  provider    Provider
-  Participant Participant[]
-  Room        Room[]
-  Stream      Stream[]
-  Upvote      Upvote[]
-}
+model Participant {
+  id       String   @id @default(uuid())
+  userId   String
+  roomId   String
+  role     Role     @default(USER)
+  joinedAt DateTime @default(now())
 
-enum Provider {
-  Google
-  Credentials
+  user User @relation("UserParticipants", fields: [userId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
+  @@index([roomId])
 }
 
 enum Role {
@@ -82,7 +89,17 @@ enum Role {
   USER
 }
 
+enum Provider {
+  Google
+  Credentials
+}
+
 enum StreamType {
   Youtube
   Spotify
+}
+
+model Trail{
+  id       String   @id @default(uuid())
+  example   String
 }

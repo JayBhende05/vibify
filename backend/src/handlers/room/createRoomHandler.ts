@@ -7,9 +7,7 @@ export const createRoomHandler = async (
   res: Response
 ) => {
   try {
-    const roomData = req.body;
-
-    const parsed = createRoomSchema.safeParse(roomData);
+    const parsed = createRoomSchema.safeParse(req.body);
 
     if (!parsed.success) {
       return res.status(400).json({
@@ -18,44 +16,38 @@ export const createRoomHandler = async (
       });
     }
 
-    const result = await prismaClient.$transaction(async (tx) => {
-      const room = await tx.room.create({
-        data: {
-          name: parsed.data.roomName,
-          host: {
-            connect: {
-              id: parsed.data.userId,
-            },
-          },
-        },
-      });
+   const user = await prismaClient.user.findUnique({
+  where: {
+    id: parsed.data.userId,
+  },
+});
 
-      const participant = await tx.participant.create({
-        data: {
-          role: "HOST",
-          user: {
-            connect: {
-              id: parsed.data.userId,
-            },
-          },
-          room: {
-            connect: {
-              id: room.id,
-            },
-          },
-        },
-      });
+if (!user) {
+  return res.status(404).json({
+    success: false,
+    error: "User not found",
+  });
+}
 
-      return {
-        room,
-        participant,
-      };
-    });
+const room = await prismaClient.room.create({
+  data: {
+    name: parsed.data.roomName,
+    hostId: user.id,
+  },
+});
+
+const participant = await prismaClient.participant.create({
+  data: {
+    role: "HOST",
+    userId: user.id,
+    roomId: room.id,
+  },
+});
 
     return res.status(201).json({
       success: true,
-      roomId: result.room.id,
-      participantId: result.participant.id,
+      roomId: room.id,
+      participantId: participant.id,
     });
 
   } catch (error) {

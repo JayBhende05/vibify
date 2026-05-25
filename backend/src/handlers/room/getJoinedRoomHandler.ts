@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-+
 import { prismaClient } from "../../utils/prisma.js";
 import { getJoinRoomSchema } from "../../schemas/room/getJoinedRoom.schema.js";
 
@@ -53,7 +52,7 @@ export const getJoinedRoomsHandler = async (
         roomId: item.room.id,
         roomName: item.room.name,
         hostId: item.room.hostId,
-        hostName: item.room.host.name,
+        hostName: item.room.host?.name,
         activeUsers: item.room._count.participants,
       })),
     });
