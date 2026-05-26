@@ -5,12 +5,13 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import useUserSession from "@/store/useUserStore";
+import {useAuthStore} from "@/store/useUserStore";
+import { email } from "zod";
 
 export default  function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const setUserSession = useUserSession((state) => state.setUserId);
-  const userId = useUserSession((state) => state.userId);
+  const setUserSession = useAuthStore((state) => state.setUser);
+  const user = useAuthStore((state) => state.user);
   const session = useSession();
   const {
     register,
@@ -26,7 +27,8 @@ export default  function LoginPage() {
     });
 
     if(res){
-      setUserSession(session.data?.user.id || "")
+      setUserSession({id :session.data?.user.id, name : session.data?.user.name, email : session.data?.user.email})
+      console.log("Auth saved user details", user);
     }
     
 

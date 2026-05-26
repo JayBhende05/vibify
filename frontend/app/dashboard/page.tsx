@@ -15,8 +15,8 @@ import { GetUploadedSongResponse } from '@/schemas/stream/getUploadedSongs';
 async function page() {
   const session = await getServerSession(authOptions)
   
-  const createdRooms : GetRoomsCreatedResponse = await getRoomsCreated(session);
-  const joinedRooms: JoinedRoomResponse = await getJoinedRooms(session);
+  const createdRooms : GetRoomsCreatedResponse = await getRoomsCreated();
+  const joinedRooms: JoinedRoomResponse = await getJoinedRooms();
   const uploadedSongs : GetUploadedSongResponse  = await getUploadedSongs(session);
   return (
     <>

@@ -16,7 +16,7 @@ import {
 import  FeatureCard  from "@/components/FeatureCards";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import useUserSession from "@/store/useUserStore";
+// import useUserSession from "@/store/useUserStore";
 
 
 
@@ -25,10 +25,10 @@ import useUserSession from "@/store/useUserStore";
 export default function LandingPage() {
   const router = useRouter();
   const {data: session} = useSession();
-  const userId = useUserSession((state) => state.userId)
+  // const userId = useUserSession((state) => state.userId)
 
   console.log("User session data is at homme [age" , session?.user)
-  console.log("USer id set at store ", userId);
+  // console.log("USer id set at store ", userId);
 
   return (
     <div className="min-h-screen bg-background text-white selection:bg-brand/30 overflow-x-hidden font-sans">

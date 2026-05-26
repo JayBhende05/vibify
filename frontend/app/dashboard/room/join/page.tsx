@@ -8,12 +8,14 @@ import { useForm } from "react-hook-form";
 import { JoinRoomInput, joinRoomInputSchema } from "@/schemas/room/joinRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { joinRoom } from "@/actions/room.actions";
-import useUserStore from "@/store/useUserStore";
+import { useAuthStore } from "@/store/useUserStore";
+// import useUserStore from "@/store/useUserStore";
 
 export default function JoinRoom() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const setUserRole = useUserStore((state) => state.setUserRole);
+    const user = useAuthStore((state) => state.user);
+  console.log("User is ", user)
+  // const setUserRole = useUserStore((state) => state.setUserRole);
   const {
     register,
     handleSubmit,
@@ -30,14 +32,14 @@ export default function JoinRoom() {
 
     setLoading(true);
 
-    const res = await joinRoom(data, session?.user.id!);
+    const res = await joinRoom(data);
 
     if (!res.success) {
       setError(res.error?.toString() || "Failed to Join room");
       setLoading(false);
       return;
     }
-    setUserRole(res?.role || "");
+    // setUserRole(res?.role || "");
     router.push(`/dashboard/room/${res.roomId}`);
     setLoading(false);
   };

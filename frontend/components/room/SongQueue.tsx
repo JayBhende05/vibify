@@ -3,7 +3,7 @@ import React from "react";
 import { ArrowBigUp, Music, Trash2, Disc } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
-import useUserStore from "@/store/useUserStore";
+// import useUserStore from "@/store/useUserStore";
 import { removeSong, upvoteSong } from "@/actions/song.action";
 import { useRouter } from "next/navigation";
 import { Song } from "@/types";
@@ -44,7 +44,9 @@ export default function SongQueue({
 } : SongQueueProps) {
 
   const router = useRouter();
-  const userRole = useUserStore((state) => state.role);
+  // const userRole = useUserStore((state) => state.role);
+
+
 
     const handleVote = async (songId: string) => {
     await upvoteSong(songId);
@@ -157,7 +159,7 @@ console.log("Data in prosp is ", songs)
                     </span>
                   </button>
 
-                  {userRole === "HOST" && removeSong && (
+                  {/* {userRole === "HOST" && removeSong && ( */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -167,7 +169,7 @@ console.log("Data in prosp is ", songs)
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
-                  )}
+                  {/* )} */}
                 </div>
               </div>
             </motion.div>

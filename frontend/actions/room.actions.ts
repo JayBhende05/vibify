@@ -7,11 +7,12 @@ import { JoinedRoomResponse } from "@/schemas/room/getJoinedRooms";
 import { GetRoomDetailsResponse } from "@/schemas/room/getRoomDetails";
 import { GetRoomsCreatedResponse } from "@/schemas/room/getRoomsCreated";
 import { JoinRoomInput, joinRoomInputSchema, JoinRoomResponse, joinRoomSchema } from "@/schemas/room/joinRoom";
+import axios from "axios";
 
 import { getServerSession } from "next-auth";
 
-type RoomFromDB  = {
- id: string;
+type RoomFromDB = {
+  id: string;
   name: string;
   hostId: string;
   host: {
@@ -22,47 +23,25 @@ type RoomFromDB  = {
   };
 };
 
+
 async function createRoom(
   data: CreateRoomInput,
-  userId: string
-) : Promise<CreateRoomResponse> {
+
+): Promise<CreateRoomResponse> {
   try {
-    const parsed = createRoomSchema.safeParse(data);
+    const session = await getServerSession(authOptions)
 
-    if (!parsed.success) {
+    const userID = session?.user.id
+
+    if (!userID) {
       return {
         success: false,
-        error: parsed.error
-      }
-    }
-
-    if (!userId) {
-      return {
-        success: false,
-        error: "Unauthorized",
+        error: "Login again",
       };
     }
-    const room = await prismaClient.room.create({
-      data: {
-        name: parsed.data.roomName,
-        hostId: userId
-      }
-    })
+    const result = await axios.post(`${process.env.BACKEND_URL}/room/create`, { roomName: data.roomName, userID })
 
-    const participant = await prismaClient.participant.create({
-      data: {
-        userId: room.hostId,
-        roomId: room.id,
-        role: "HOST"
-      }
-    })
-
-
-    return {
-      success: true,
-      roomId: room.id,
-      participantId: participant.id
-    };
+    return result.data
   } catch (error) {
     console.error("Create Room Error:", error);
 
@@ -75,53 +54,21 @@ async function createRoom(
 
 async function getRoomDetails(roomId: string): Promise<GetRoomDetailsResponse> {
   try {
-    const user = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions)
 
-    if (!user) {
+    const userID = session?.user.id
+
+    if (!userID) {
       return {
         success: false,
-        error: "Login Again"
-      }
+        error: "Login again",
+      };
     }
+    const result = await axios.post(`${process.env.BACKEND_URL}/room/`, { roomId: roomId, userId: userID })
 
-    if (!roomId) {
-      return {
-        success: false,
-        error: "Room Id Missing"
-      }
-    }
+  
 
-    const room = await prismaClient.room.findFirst({
-      where: {
-        id: roomId
-      }
-    })
-
-    if (!room) {
-      return {
-        success: false,
-        error: "Incorrect Room Id"
-      }
-    }
-
-    
-    const host = await prismaClient.user.findFirst({
-      where: {
-        id: room.hostId
-      }
-    })
-
-    return {
-      success: true,
-      roomId: room.id,
-      roomName: room.name,
-      hostId: room.hostId,
-      hostName: host?.name || "Host" ,
-
-    }
-
-
-
+    return result.data
   } catch (error) {
     console.error("Join Room Error:", error);
 
@@ -132,53 +79,25 @@ async function getRoomDetails(roomId: string): Promise<GetRoomDetailsResponse> {
   }
 }
 
-async function getRoomsCreated(session : any) : Promise<GetRoomsCreatedResponse> 
-  {
-  try {
-  
 
-    if (!session?.user.id) {
+async function getRoomsCreated(): Promise<GetRoomsCreatedResponse> {
+  try {
+
+  const session = await getServerSession(authOptions)
+
+    const userID = session?.user.id
+
+    if (!userID) {
       return {
         success: false,
-        error: "Login Again",
+        error: "Login again",
       };
     }
+    const result = await axios.post(`${process.env.BACKEND_URL}/room/rooms-created`, { userId: userID })
 
-    const rooms = await prismaClient.room.findMany({
-      where: {
-        hostId: session.user.id,
-      },
+    return result.data
+   
 
-      select: {
-        id: true,
-        name: true,
-        hostId: true,
-
-        host: {
-          select: {
-            name: true,
-          },
-        },
-
-        _count: {
-          select: {
-            participants: true,
-          },
-        },
-      },
-    });
-
-    return {
-      success: true,
-
-      rooms: rooms.map((room : RoomFromDB) => ({
-        roomId: room.id,
-        roomName: room.name,
-        hostId: room.hostId,
-        hostName: room.host.name,
-        activeUsers: room._count.participants,
-      })),
-    };
   } catch (error) {
     console.error("Get Rooms Error:", error);
 
@@ -203,57 +122,23 @@ interface JoinedRoomsQuery {
   };
 }
 
-async function getJoinedRooms(session : any) : Promise<JoinedRoomResponse> {
+async function getJoinedRooms(): Promise<JoinedRoomResponse> {
   try {
-    
+ const session = await getServerSession(authOptions)
 
-    if (!session?.user.id) {
+    const userID = session?.user.id
+
+    if (!userID) {
       return {
         success: false,
-        error: "Login Again",
+        error: "Login again",
       };
     }
+    const result = await axios.post(`${process.env.BACKEND_URL}/room/joined-rooms`, { userId: userID })
 
-    const joinedRooms = await prismaClient.participant.findMany({
-      where: {
-        userId: session.user.id,
-        role: "USER",
-      },
+    return result.data
 
-      select: {
-        room: {
-          select: {
-            id: true,
-            name: true,
-            hostId: true,
-
-            host: {
-              select: {
-                name: true,
-              },
-            },
-
-            _count: {
-              select: {
-                participants: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    return {
-      success: true,
-
-      rooms: joinedRooms.map((item : JoinedRoomsQuery) => ({
-        roomId: item.room.id,
-        roomName: item.room.name,
-        hostId: item.room.hostId,
-        hostName: item.room.host.name,
-        activeUsers: item.room._count.participants,
-      })),
-    };
+    
   } catch (error) {
     console.error("Get Joined Rooms Error:", error);
 
@@ -265,73 +150,22 @@ async function getJoinedRooms(session : any) : Promise<JoinedRoomResponse> {
 }
 
 
-async function joinRoom(data: JoinRoomInput, userId: string) : Promise<JoinRoomResponse> {
+async function joinRoom(data: JoinRoomInput): Promise<JoinRoomResponse> {
   try {
-    console.log("Join Room Data", data)
-    const parsed = joinRoomInputSchema.safeParse(data);
+     const session = await getServerSession(authOptions)
 
-    if (!parsed.success) {
+    const userID = session?.user.id
+
+    if (!userID) {
       return {
         success: false,
-        error: parsed.error
+        error: "Login again",
       };
     }
+    const result = await axios.post(`${process.env.BACKEND_URL}/room/join`, { roomName : data.roomName, userId: userID })
 
-    if (!userId) {
-      return {
-        success: false,
-        error: "Unauthorized"
-      };
-    }
+    return result.data
 
-    const room = await prismaClient.room.findFirst({
-      where: {
-        name: parsed.data.roomName
-      }
-    });
-
-    if (!room) {
-      return {
-        success: false,
-        error: "Room does not exist"
-      };
-    }
-
-    const isHost = room.hostId === userId;
-
-    const existing = await prismaClient.participant.findUnique({
-      where: {
-        userId_roomId: {
-          userId,
-          roomId: room.id
-        }
-      }
-    });
-
-    if (existing) {
-      return {
-        success: true,
-        roomId: room?.id || " ",
-        participantId: existing.id,
-        role: isHost ? "HOST" : "USER",
-        alreadyJoined: true
-      };
-    }
-
-    const participant = await prismaClient.participant.create({
-      data: {
-        userId,
-        roomId: room.id
-      }
-    });
-
-    return {
-      success: true,
-      roomId: room.id,
-      participantId: participant.id,
-      role: "USER",
-      alreadyJoined: false
-    };
 
   } catch (error) {
     console.error("Join Room Error:", error);

@@ -6,6 +6,7 @@ export const getRoomDetailsSchema = z.discriminatedUnion("success", [
     roomId : z.string(),
     roomName : z.string(),
     hostId : z.string(),
+    role : z.string(),
     hostName  : z.string()
   }), 
 

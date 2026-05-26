@@ -23,7 +23,7 @@ model User {
 model Room {
   id     String @id @default(uuid())
   name   String
-  hostId String
+  hostId String    
   host   User   @relation("HostedRooms", fields: [hostId], references: [id])
   participants Participant[]
   streams   Stream[]
@@ -97,4 +97,9 @@ enum Provider {
 enum StreamType {
   Youtube
   Spotify
+}
+
+model Trail{
+  id       String   @id @default(uuid())
+  example   String
 }

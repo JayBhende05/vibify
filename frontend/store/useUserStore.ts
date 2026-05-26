@@ -1,19 +1,31 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
 
-interface userSessionType{
-  userId : string,
-  role : string,
-  setUserId : (val : string) => void
-  setUserRole : (val : string) => void
-}
+type AuthState = {
+  user: User | null;
 
-const useUserStore = create<userSessionType>((set) => ({
-  userId : "",
-  role : "USER",
-  setUserId : (value) => set({userId : value}),
-  setUserRole : (value) => set({role : value})
+  setUser: (user: User) => void;
 
-}))
+  logout: () => void;
+};
 
-export default useUserStore;
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+
+      setUser: (user) => set({ user }),
+
+      logout: () => set({ user: null }),
+    }),
+    {
+      name: "auth-storage",
+    }
+  )
+);
