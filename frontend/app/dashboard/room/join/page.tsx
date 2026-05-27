@@ -14,7 +14,7 @@ import { useAuthStore } from "@/store/useUserStore";
 export default function JoinRoom() {
   const router = useRouter();
     const user = useAuthStore((state) => state.user);
-  console.log("User is ", user)
+  // console.log("User is ", user)
   // const setUserRole = useUserStore((state) => state.setUserRole);
   const {
     register,

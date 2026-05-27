@@ -43,9 +43,9 @@ type PlayingSuccess = {
  
 };
 interface UserRole{
-  role : "host" | "listener"
+  role : "HOST" | "USER"
 }
-type User = "host" | "listener"
+type User = "HOST" | "USER"
 
 
 interface NowPlayingProps {
@@ -139,7 +139,7 @@ export default function NowPlaying({ song, user }: NowPlayingProps) {
                 Start Stream
               </button>
 
-              {user.role === "host" && (
+              {user.role === "HOST" && (
                 <button
                   onClick={handleSkip}
                   className="px-8 py-4 bg-white/10 text-white rounded-full"
@@ -193,7 +193,7 @@ export default function NowPlaying({ song, user }: NowPlayingProps) {
                 )}
               </button>
 
-              {user.role === "host" && (
+              {user.role === "HOST" && (
                 <button
                   onClick={handleSkip}
                   className="p-3 rounded-full bg-white/10 hover:bg-white/20"

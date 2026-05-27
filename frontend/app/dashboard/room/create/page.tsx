@@ -29,7 +29,7 @@ export default function CreateRoom() {
     setLoading(true);
 
   const res = await createRoom(data);
-console.log("DAta is ", data , "User id" ,user?.id)
+// console.log("DAta is ", data , "User id" ,user?.id)
   if (!res.success) {
     setError(res.error?.toString() || "Failed to create room");
     setLoading(false);

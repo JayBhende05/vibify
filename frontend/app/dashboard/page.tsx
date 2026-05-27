@@ -13,11 +13,11 @@ import { JoinedRoomResponse } from '@/schemas/room/getJoinedRooms';
 import { GetUploadedSongResponse } from '@/schemas/stream/getUploadedSongs';
 
 async function page() {
-  const session = await getServerSession(authOptions)
+  // const session = await getServerSession(authOptions)
   
   const createdRooms : GetRoomsCreatedResponse = await getRoomsCreated();
   const joinedRooms: JoinedRoomResponse = await getJoinedRooms();
-  const uploadedSongs : GetUploadedSongResponse  = await getUploadedSongs(session);
+  const uploadedSongs : GetUploadedSongResponse  = await getUploadedSongs();
   return (
     <>
     <Home

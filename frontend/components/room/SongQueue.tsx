@@ -35,12 +35,17 @@ interface SongQueueProps {
   songs: Songs[];
   currentSongId?: string;
   isPlaying?: boolean;
+  role : "HOST" | "USER";
+  roomId: string
+
 }
 
 export default function SongQueue({
   songs,
   currentSongId,
   isPlaying,
+  role,
+  roomId
 } : SongQueueProps) {
 
   const router = useRouter();
@@ -54,10 +59,10 @@ export default function SongQueue({
   };
 
   const handleRemoveSong = async (songId : string) => {
-    await removeSong(songId);
+    await removeSong(songId, roo);
     router.refresh();
   }
-console.log("Data in prosp is ", songs)
+// console.log("Data in prosp is ", songs)
   return (
     <section className="mb-12">
       <div className="flex items-center justify-between mb-8">
@@ -159,17 +164,17 @@ console.log("Data in prosp is ", songs)
                     </span>
                   </button>
 
-                  {/* {userRole === "HOST" && removeSong && ( */}
+                  {role === "HOST" && removeSong && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        removeSong(song.id);
+                        removeSong(song.id, roomId);
                       }}
                       className="p-2.5 rounded-xl hover:bg-red-500/20 text-white/20 hover:text-red-400 transition-all group/trash"
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
-                  {/* )} */}
+                  )} 
                 </div>
               </div>
             </motion.div>

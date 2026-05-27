@@ -15,7 +15,7 @@ type FormValues = {
 export default function AddSong({roomId } : {roomId : string}  ) {
   const [isExpanding, setIsExpanding] = useState(false);
   
-  console.log("Room id in add song", roomId )
+  // console.log("Room id in add song", roomId )
   const { data: session } = useSession();
   const {
     register,
@@ -31,31 +31,31 @@ const router = useRouter()
     console.log("FORM SUBMITTED:", data);
 
     if (!session?.user?.id) {
-      console.log("No session");
+      // console.log("No session");
       return;
     }
 
     if (!roomId) {
-      console.log("Jooin a Room");
+      // console.log("Jooin a Room");
       return;
     }
 
     try {
-      console.log({
-        url: data.url,
-        userId: session.user.id,
-        roomId: roomId,
-      })
+      // console.log({
+      //   url: data.url,
+      //   userId: session.user.id,
+      //   roomId: roomId,
+      // })
       const res = await axios.post("/api/stream", {
         url: data.url,
         creatorId: session.user.id,
         roomId: roomId,
       });
 
-      console.log("✅ API success:", res.data);
+      // console.log("✅ API success:", res.data);
       reset()
     } catch (err) {
-      console.error("❌ API error:", err);
+      // console.error("❌ API error:", err);
     }
   }
 

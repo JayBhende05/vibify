@@ -1,4 +1,5 @@
 "use server"
+import axios from "axios"
 import { authOptions } from "@/lib/auth"
 import { prismaClient } from "@/lib/db"
 import { GetSongResponse } from "@/schemas/songs/getSong"
@@ -6,50 +7,22 @@ import { RemoveSongResponse } from "@/schemas/songs/removeSong"
 import { UpvoteSongResponse } from "@/schemas/songs/upvoteSong"
 
 import { getServerSession } from "next-auth"
+import { revalidatePath } from "next/cache"
 
 
 export async function getSong(roomId:string):  Promise<GetSongResponse> {
   try {
-      if(!roomId){
-        return {
-          success : false,
-          error : "Room Id Missing"
-        }
-      }
-
-      const songs = await prismaClient.stream.findMany({
-        where : {
-          roomId : roomId,
-          active : true
-        },
-        include : {
-          addedBy : true,
-          _count : {
-            select : {
-              upvotes : true
-            }
-          }
-        },
-        orderBy : {
-          upvotes : {
-            _count : "desc"
-          }
-        }
-      })
-
-      if(!songs){
-        return {
-          success : false,
-          error : "No Songs Added"
-        }
-      }
-
-      // console.log("Song Data is ", songs);
-
+       if (!roomId) {
       return {
-        success : true,
-        songs : songs
-      }
+        success: false,
+        error: "Try again",
+      };
+    }
+
+    const result = await axios.post(`${process.env.BACKEND_URL}/song/getall`, { roomId: roomId })
+
+
+    return result.data
 
   } catch (error) {
      console.error("Song Fetching Error:", error);
@@ -74,20 +47,14 @@ export async function upvoteSong(songId : string) : Promise<UpvoteSongResponse>{
           error : "Song Id Missing"
         }
       }
+          const session = await getServerSession(authOptions)
 
-      const user = await getServerSession(authOptions);
+    const userID = session?.user.id
 
-      await prismaClient.upvote.create({
-        data : {
-          streamId : songId,
-          userId : user?.user.id || ""
-        }
-      })
+      const result = await axios.post(`${process.env.BACKEND_URL}/song/upvote`, { songId: songId, userId : userID })
 
-      return {
-        success : true,
-        message : "Song upvoted"
-      }
+
+    return result.data
   } catch (error) {
      console.error("Song Upvote Error:", error);
 
@@ -98,32 +65,32 @@ export async function upvoteSong(songId : string) : Promise<UpvoteSongResponse>{
   }
 }
 
-export async function removeSong(songId : string) : Promise<RemoveSongResponse>{
+export async function removeSong(
+  songId: string,
+  roomId: string
+): Promise<RemoveSongResponse> {
   try {
-    if(!songId){
+    if (!songId) {
       return {
-        success : false,
-        error : "Song Id is missing"
-      }
+        success: false,
+        error: "Song Id Missing",
+      };
     }
 
-    const song = await prismaClient.stream.delete({
-      where : {
-        id : songId
-      }
-    })
+    const result = await axios.post(
+      `${process.env.BACKEND_URL}/song/remove`,
+      { songId }
+    );
+
+    revalidatePath(`/room/${roomId}`);
+
+    return result.data;
+  } catch (error) {
+    console.log("Error while deleting Song", error);
 
     return {
-      success : true,
-      message : "Song Removed Successfully",
-      data : song
-    }
-
-  } catch (error) {
-    console.log("Error while deleting Song" , error);
-      return {
       success: false,
-      error: "Something went wrong"
+      error: "Something went wrong",
     };
   }
 }

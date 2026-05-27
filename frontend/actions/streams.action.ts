@@ -1,49 +1,27 @@
+import { authOptions } from "@/lib/auth";
 import { prismaClient } from "@/lib/db";
 import { GetUploadedSongResponse, UploadedSongQuery } from "@/schemas/stream/getUploadedSongs";
 // import { GetUploadedSongResponse } from "@/types";
+import axios  from "axios";
+import { getServerSession } from "next-auth";
 
-
-export async function getUploadedSongs(session: any) : Promise<GetUploadedSongResponse> {
+export async function getUploadedSongs() : Promise<GetUploadedSongResponse> {
   try {
     
 
-    if (!session?.user.id) {
+    const session = await getServerSession(authOptions)
+
+    const userID = session?.user.id
+
+    if (!userID) {
       return {
         success: false,
-        error: "Login Again",
+        error: "Login again",
       };
     }
+    const result = await axios.post(`${process.env.BACKEND_URL}/stream/all`, { userId: userID })
 
-    const songs = await prismaClient.stream.findMany({
-      where: {
-        addedById: session.user.id,
-      },
-
-      select: {
-        id: true,
-        sThumbnail: true,
-        title: true,
-        url: true,
-      },
-    });
-
-    if (songs.length === 0) {
-      return {
-        success: false,
-        error: "Songs not uploaded yet",
-      };
-    }
-
-    return {
-      success: true,
-
-      songs: songs.map((item : UploadedSongQuery) => ({
-        id: item.id,
-        sThumbnail: item.sThumbnail,
-        title: item.title,
-        url: item.url,
-      })),
-    };
+    return result.data
   } catch (error) {
     console.error("Get Uploaded Songs Error:", error);
 

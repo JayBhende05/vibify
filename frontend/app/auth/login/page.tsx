@@ -26,13 +26,8 @@ export default  function LoginPage() {
       name: data.name,
     });
 
-    if(res){
-      setUserSession({id :session.data?.user.id, name : session.data?.user.name, email : session.data?.user.email})
-      console.log("Auth saved user details", user);
-    }
-    
-
-    console.log("Session data Got us userId ", session.data)
+   
+    // console.log("Session data Got us userId ", session.data)
   };
 
   return (

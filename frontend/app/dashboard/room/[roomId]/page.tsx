@@ -1,5 +1,4 @@
 import RoomHeader from "@/components/room/Header";
-
 import { getRoomDetails } from "@/actions/room.actions";
 import AddSong from "@/components/room/AddSong";
 import SongQueue from "@/components/room/SongQueue";
@@ -29,14 +28,14 @@ export default async function Page({
 
   const currentSong = sortedSongs[0];
   const queueSongs = sortedSongs.slice(1);
-
+  const ROLE = roomDetails.success ? roomDetails.role : "USER"
   return (
     <div className="flex flex-col gap-8 p-8">
       <RoomHeader room={roomDetails} />
 
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 lg:col-span-8 space-y-6">
-          <NowPlaying song={currentSong} user={{ role: "host" }} />
+          <NowPlaying song={currentSong} user={{ role: ROLE }} />
 
           <AddSong roomId={roomId} />
 
@@ -44,6 +43,8 @@ export default async function Page({
             songs={queueSongs}
             currentSongId={currentSong?.id}
             isPlaying={!!currentSong?.id}
+            role={ROLE}
+            roomId={roomDetails.success ? roomDetails.roomId : ""}
           />
         </div>
       </div>
