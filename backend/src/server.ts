@@ -5,11 +5,12 @@ import roomRoutes from './routes/roomRoutes.js'
 import songRoutes from './routes/songRoutes.js'
 import streamRoutes from './routes/streamRoutes.js'
 import dotenv from "dotenv"
+import cors from 'cors'
 
 const app = express() 
 dotenv.config({ path : "'./../.env"})
 app.use(express.json());
-
+app.use(cors())
 app.use('/room', roomRoutes );
 app.use('/song', songRoutes );
 app.use('/stream', streamRoutes );

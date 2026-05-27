@@ -8,8 +8,8 @@ import { joinRoomHandler } from "../handlers/room/joinRoomHandler.js";
 
 const router = Router();
 
-router.post('/create', createRoomHandler );
-router.post('/joined-rooms', getJoinedRoomsHandler );
+router.post('/create', createRoomHandler ); 
+router.post('/joined-rooms', getJoinedRoomsHandler );  
 router.post('/', getRoomDetailsHandler );
 router.post('/rooms-created', getRoomsCreatedHandler );
 router.post('/join', joinRoomHandler );

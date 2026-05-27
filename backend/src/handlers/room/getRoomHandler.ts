@@ -42,6 +42,7 @@ export const getRoomDetailsHandler = async (
       roomId: room.id,
       roomName: room.name,
       hostId: room.hostId,
+      role : parsed.data.userId == host?.id ? "HOST" : "USER",
       hostName: host?.name || "Host",
     });
   } catch (error) {

@@ -29,6 +29,20 @@ if (!user) {
   });
 }
 
+const exisitngRoom = await prismaClient.room.findFirst({
+  where : {
+    name : parsed.data.roomName,
+    
+  }
+})
+
+if(exisitngRoom){
+   return res.status(404).json({
+    success: false,
+    error: "Room name Already Exist",
+  });
+}
+
 const room = await prismaClient.room.create({
   data: {
     name: parsed.data.roomName,

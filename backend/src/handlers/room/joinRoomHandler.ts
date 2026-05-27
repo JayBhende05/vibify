@@ -18,7 +18,7 @@ export const joinRoomHandler = async (
       });
     }
 
-    const room = await prismaClient.room.findUnique({
+    const room = await prismaClient.room.findFirst({
       where: {
         name: parsed.data.roomName,
       },
