@@ -4,36 +4,46 @@ import WebSocket, { WebSocketServer } from 'ws'
 import roomRoutes from './routes/roomRoutes.js'
 import songRoutes from './routes/songRoutes.js'
 import streamRoutes from './routes/streamRoutes.js'
-import dotenv from "dotenv"
+import dotenv from 'dotenv'
 import cors from 'cors'
 
-const app = express() 
-dotenv.config({ path : "'./../.env"})
-app.use(express.json());
+dotenv.config()
+
+const app = express()
+
+app.use(express.json())
 app.use(cors())
-app.use('/room', roomRoutes );
-app.use('/song', songRoutes );
-app.use('/stream', streamRoutes );
 
-const server  =  http.createServer(app);
+app.use('/room', roomRoutes)
+app.use('/song', songRoutes)
+app.use('/stream', streamRoutes)
 
-const wss = new WebSocketServer({server});
+const server = http.createServer(app)
 
-wss.on("connection", (ws)=>{
-  ws.on("error", console.error);
+const wss = new WebSocketServer({ server })
 
-  ws.on('message', (msg) =>{
-    console.log("Message Received" , msg.toString());
+wss.on('connection', (ws) => {
+  console.log('Client connected')
+
+  ws.on('error', (err) => {
+    console.error('WebSocket error:', err)
   })
 
-  ws.on('close',()=>{
-    console.log("Client Disconneted");
+  ws.on('message', (msg) => {
+    console.log('Message Received:', msg.toString())
+
+    ws.send(`Server received: ${msg}`)
   })
 
-  ws.send("Hello Message from WebSocket Server")
+  ws.on('close', () => {
+    console.log('Client disconnected')
+  })
+
+  ws.send('Hello Message from WebSocket Server')
 })
 
+const PORT = process.env.PORT || 8080
 
-server.listen(8080, ()=>{
-  console.log("Server is listening on Port 8080")
+server.listen(PORT, () => {
+  console.log(`Server is listening on Port ${PORT}`)
 })
