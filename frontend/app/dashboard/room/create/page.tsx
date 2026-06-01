@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import {createRoom} from "@/actions/room.actions";
 import { CreateRoomInput, createRoomSchema } from "@/schemas/room/createRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthStore } from "@/store/useUserStore";
+import { useAuthStore } from "@/store/useAuthStore";
 
 
 export default function CreateRoom() {

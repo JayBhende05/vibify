@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import {useAuthStore} from "@/store/useUserStore";
+import {useAuthStore} from "@/store/useAuthStore";
 import { email } from "zod";
 
 export default  function LoginPage() {

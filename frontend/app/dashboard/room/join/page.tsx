@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { JoinRoomInput, joinRoomInputSchema } from "@/schemas/room/joinRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { joinRoom } from "@/actions/room.actions";
-import { useAuthStore } from "@/store/useUserStore";
+import { useAuthStore } from "@/store/useAuthStore";
 // import useUserStore from "@/store/useUserStore";
 
 export default function JoinRoom() {
