@@ -59,7 +59,7 @@ export default function SongQueue({
   };
 
   const handleRemoveSong = async (songId : string) => {
-    await removeSong(songId, roo);
+    await removeSong(songId, roomId);
     router.refresh();
   }
 // console.log("Data in prosp is ", songs)

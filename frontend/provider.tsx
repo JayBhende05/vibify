@@ -8,6 +8,7 @@ export const Providers = ({children} : {children : React.ReactNode})=>{
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
       {children}
+
       </QueryClientProvider>
     </SessionProvider>
   )

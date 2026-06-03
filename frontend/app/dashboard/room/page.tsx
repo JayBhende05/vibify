@@ -1,30 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Music, LogIn, Plus, Hash } from "lucide-react";
+import { Plus, Hash } from "lucide-react";
+import { getSocket } from "@/lib/websocket";
 
 export default function DashboardHome() {
   const router = useRouter();
   const { data: session } = useSession();
 
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+
+  // Initialize WebSocket once
+  useEffect(() => {
+    const ws = getSocket();
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+
+      ws.send(
+        JSON.stringify({
+          type: "HEALTH",
+        })
+      );
+    };
+
+    ws.onmessage = (event) => {
+      console.log("WS Message:", event.data);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket Error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
+
+    setSocket(ws);
+
+    return () => {
+      // Uncomment if you want to close connection on unmount
+      // ws.close();
+    };
+  }, []);
+
   // CREATE ROOM
-  const [roomName, setRoomName] = useState<string >("");
-  const [userNameCreate, setUserNameCreate] = useState<string>("");
+  const [roomName, setRoomName] = useState("");
+  const [userNameCreate, setUserNameCreate] = useState("");
 
   // JOIN ROOM
-  const [roomCode, setRoomCode] = useState<string>("");
-  const [userNameJoin, setUserNameJoin] = useState<string>("");
+  const [roomCode, setRoomCode] = useState("");
+  const [userNameJoin, setUserNameJoin] = useState("");
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // CREATE ROOM
   const handleCreateRoom = async () => {
-    if (!roomName.trim()) return setError("Room name required");
-    if (!session?.user && !userNameCreate.trim())
-      return setError("Name required");
+    if (!roomName.trim()) {
+      setError("Room name required");
+      return;
+    }
+
+    if (!session?.user && !userNameCreate.trim()) {
+      setError("Name required");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -32,7 +74,9 @@ export default function DashboardHome() {
     try {
       const res = await fetch("/api/room/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           roomName,
           userName: session?.user?.name || userNameCreate,
@@ -41,21 +85,28 @@ export default function DashboardHome() {
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
 
       router.push(`/dashboard/room/${data.roomId}`);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Failed to create room");
     } finally {
       setLoading(false);
     }
   };
 
-  // JOIN ROOM
   const handleJoinRoom = async () => {
-    if (!roomCode.trim()) return setError("Room code required");
-    if (!userNameJoin.trim() && !session?.user)
-      return setError("Name required");
+    if (!roomCode.trim()) {
+      setError("Room code required");
+      return;
+    }
+
+    if (!session?.user && !userNameJoin.trim()) {
+      setError("Name required");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -63,7 +114,9 @@ export default function DashboardHome() {
     try {
       const res = await fetch("/api/room/join", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           roomCode,
           userName: session?.user?.name || userNameJoin,
@@ -72,11 +125,25 @@ export default function DashboardHome() {
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      if (socket?.readyState === WebSocket.OPEN) {
+        socket.send(
+          JSON.stringify({
+            type: "JOIN_ROOM",
+            roomId: data.roomId,
+            userId: data.userID,
+          })
+        );
+      } else {
+        console.error("WebSocket is not connected");
+      }
 
       router.push(`/dashboard/room/${data.roomId}`);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Failed to join room");
     } finally {
       setLoading(false);
     }
@@ -84,7 +151,6 @@ export default function DashboardHome() {
 
   return (
     <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mt-10">
-      
       {/* CREATE ROOM */}
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
@@ -109,10 +175,11 @@ export default function DashboardHome() {
         )}
 
         <button
+          disabled={loading}
           onClick={handleCreateRoom}
-          className="w-full bg-brand text-black py-2 rounded-lg font-semibold hover:opacity-90"
+          className="w-full bg-brand text-black py-2 rounded-lg font-semibold hover:opacity-90 disabled:opacity-50"
         >
-          Create Room
+          {loading ? "Creating..." : "Create Room"}
         </button>
       </div>
 
@@ -140,10 +207,11 @@ export default function DashboardHome() {
         )}
 
         <button
+          disabled={loading}
           onClick={handleJoinRoom}
-          className="w-full bg-white text-black py-2 rounded-lg font-semibold hover:opacity-90"
+          className="w-full bg-white text-black py-2 rounded-lg font-semibold hover:opacity-90 disabled:opacity-50"
         >
-          Join Room
+          {loading ? "Joining..." : "Join Room"}
         </button>
       </div>
 

@@ -9,13 +9,33 @@ import { JoinRoomInput, joinRoomInputSchema } from "@/schemas/room/joinRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { joinRoom } from "@/actions/room.actions";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getSocket } from "@/lib/websocket";
 // import useUserStore from "@/store/useUserStore";
 
 export default function JoinRoom() {
   const router = useRouter();
     const user = useAuthStore((state) => state.user);
-  // console.log("User is ", user)
-  // const setUserRole = useUserStore((state) => state.setUserRole);
+
+    const socket = getSocket();
+
+const sendMessage = (payload: any) => {
+  if (!socket) return;
+
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(payload));
+  } else {
+    socket.addEventListener(
+      "open",
+      () => {
+        socket.send(JSON.stringify(payload));
+      },
+      { once: true }
+    );
+  }
+};
+
+
+
   const {
     register,
     handleSubmit,
@@ -27,22 +47,27 @@ export default function JoinRoom() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  const onSubmit = async (data: any) => {
-    setError("");
+const onSubmit = async (data: any) => {
+  setError("");
+  setLoading(true);
 
-    setLoading(true);
+  const res = await joinRoom(data);
 
-    const res = await joinRoom(data);
-
-    if (!res.success) {
-      setError(res.error?.toString() || "Failed to Join room");
-      setLoading(false);
-      return;
-    }
-    // setUserRole(res?.role || "");
-    router.push(`/dashboard/room/${res.roomId}`);
+  if (!res.success) {
+    setError(res.error?.toString() || "Failed to Join room");
     setLoading(false);
-  };
+    return;
+  }
+
+  sendMessage({
+    type: "JOIN_ROOM",
+    userId: user?.id,
+    roomId: res.roomId,
+  });
+
+  router.push(`/dashboard/room/${res.roomId}`);
+  setLoading(false);
+};
 
   return (
     <div className="max-w-xl mx-auto mt-10 bg-white/5 border border-white/10 rounded-2xl p-8 shadow-lg">

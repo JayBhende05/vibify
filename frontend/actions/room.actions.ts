@@ -2,6 +2,7 @@
 
 import { authOptions } from "@/lib/auth";
 import { prismaClient } from "@/lib/db";
+import { socket } from "@/lib/websocket";
 import { CreateRoomInput, CreateRoomResponse, createRoomSchema } from "@/schemas/room/createRoom";
 import { JoinedRoomResponse } from "@/schemas/room/getJoinedRooms";
 import { GetRoomDetailsResponse } from "@/schemas/room/getRoomDetails";
@@ -164,6 +165,7 @@ async function joinRoom(data: JoinRoomInput): Promise<JoinRoomResponse> {
     }
     const result = await axios.post(`${process.env.BACKEND_URL}/room/join`, { roomName : data.roomName, userId: userID })
 
+    
     return result.data
 
 

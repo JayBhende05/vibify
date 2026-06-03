@@ -1,7 +1,8 @@
 
 "use client"
+
 import Navbar from "@/components/Navbar";
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Music,
@@ -16,6 +17,7 @@ import {
 import  FeatureCard  from "@/components/FeatureCards";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useSocketStore } from "@/store/socketStore";
 // import useUserSession from "@/store/useUserStore";
 
 
@@ -25,10 +27,6 @@ import { useSession } from "next-auth/react";
 export default function LandingPage() {
   const router = useRouter();
   const {data: session} = useSession();
-  // const userId = useUserSession((state) => state.userId)
-
-  console.log("User session data is at homme [age" , session?.user)
-  // console.log("USer id set at store ", userId);
 
   return (
     <div className="min-h-screen bg-background text-white selection:bg-brand/30 overflow-x-hidden font-sans">

@@ -1,4 +1,4 @@
-"use server"
+// "use server"
 
 import { getJoinedRooms, getRoomDetails, getRoomsCreated } from '@/actions/room.actions'
 import { getUploadedSongs } from '@/actions/streams.action';

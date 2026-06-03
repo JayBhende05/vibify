@@ -6,6 +6,8 @@ import { getSong } from "@/actions/song.action";
 import NowPlaying from "@/components/room/NowPlaying";
 import { GetSongResponse, Songs } from "@/schemas/songs/getSong";
 import { GetRoomDetailsResponse } from "@/schemas/room/getRoomDetails";
+import { useRoomSocket } from "@/hooks/useWebSocket";
+import { useAuthStore } from "@/store/useAuthStore";
 
 
 
@@ -15,7 +17,7 @@ export default async function Page({
   params: Promise<{ roomId: string }>;
 }) {
   const { roomId } = await params;
-
+  // useRoomSocket(roomId);
   const roomDetails : GetRoomDetailsResponse = await getRoomDetails(roomId);
 
   const Songs: GetSongResponse = await getSong(roomId);
@@ -35,7 +37,7 @@ export default async function Page({
 
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 lg:col-span-8 space-y-6">
-          <NowPlaying song={currentSong} user={{ role: ROLE }} />
+          <NowPlaying song={currentSong} roomId={roomId} user={{ role: ROLE  }} />
 
           <AddSong roomId={roomId} />
 

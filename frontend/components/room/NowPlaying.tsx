@@ -45,15 +45,16 @@ type PlayingSuccess = {
 interface UserRole{
   role : "HOST" | "USER"
 }
-type User = "HOST" | "USER"
+
 
 
 interface NowPlayingProps {
   song?: PlayingSuccess;
   user: UserRole
+  roomId : string
 }
 
-export default function NowPlaying({ song, user }: NowPlayingProps) {
+export default function NowPlaying({ song, user, roomId }: NowPlayingProps) {
   const [showPlayer, setShowPlayer] = useState<Boolean>(false);
   const [isPlaying, setIsPlaying] = useState<Boolean>(true);
   const [isMuted, setIsMuted] = useState<Boolean>(false);
@@ -63,7 +64,7 @@ export default function NowPlaying({ song, user }: NowPlayingProps) {
   const router = useRouter();
 
   const handleSkip = async () => {
-    await removeSong(song?.id || "");
+    await removeSong(song?.id || "", roomId);
     router.refresh();
   };
 
