@@ -7,6 +7,8 @@ import RoomCard from '@/components/dashboard/RoomCard';
 import UploadedLink from '@/components/dashboard/UploadedLink';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useEffect } from 'react';
 
 
 interface Roomprops{
@@ -31,17 +33,15 @@ interface HomeProps {
 }
 
 export default function Home({ createdRooms, joinedRooms, uploadedSongs} : HomeProps)  {
-
+  const router = useRouter()
   const {data: session , status} = useSession();
-  const router = useRouter();
-  if(!session?.user && status == "authenticated"){
-    return (
-      <>
-      <div>Loading</div>
-      </>
-    )
-  }
 
+
+
+if (status === "loading") {
+  return <div>Loading...</div>;
+}
+  
   function onEnterRoom(roomId : string){
       router.push(`/dashboard/room/${roomId}`)
   }
@@ -50,6 +50,8 @@ export default function Home({ createdRooms, joinedRooms, uploadedSongs} : HomeP
     router.push('/dashboard/room/create');
   }
   
+
+
   return (
     <div className="max-w-7xl mx-auto px-8 py-12">
       <section className="mb-16 relative p-12 rounded-[3rem] overflow-hidden border border-white/5 bg-gradient-to-br from-brand/20 via-surface to-surface">

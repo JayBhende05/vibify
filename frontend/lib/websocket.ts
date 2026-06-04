@@ -33,3 +33,19 @@ export function getSocket() {
 
   return socket;
 }
+
+export const sendMessage = (socket: WebSocket | null , payload: any) => {
+  if (!socket) return;
+
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(payload));
+  } else {
+    socket.addEventListener(
+      "open",
+      () => {
+        socket?.send(JSON.stringify(payload));
+      },
+      { once: true }
+    );
+  }
+};

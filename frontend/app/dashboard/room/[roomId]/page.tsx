@@ -1,3 +1,4 @@
+
 import RoomHeader from "@/components/room/Header";
 import { getRoomDetails } from "@/actions/room.actions";
 import AddSong from "@/components/room/AddSong";
@@ -6,8 +7,8 @@ import { getSong } from "@/actions/song.action";
 import NowPlaying from "@/components/room/NowPlaying";
 import { GetSongResponse, Songs } from "@/schemas/songs/getSong";
 import { GetRoomDetailsResponse } from "@/schemas/room/getRoomDetails";
-import { useRoomSocket } from "@/hooks/useWebSocket";
-import { useAuthStore } from "@/store/useAuthStore";
+
+import RoomSocketListner from "@/components/RoomSocketListner";
 
 
 
@@ -19,6 +20,7 @@ export default async function Page({
   const { roomId } = await params;
   // useRoomSocket(roomId);
   const roomDetails : GetRoomDetailsResponse = await getRoomDetails(roomId);
+ 
 
   const Songs: GetSongResponse = await getSong(roomId);
 
@@ -32,12 +34,14 @@ export default async function Page({
   const queueSongs = sortedSongs.slice(1);
   const ROLE = roomDetails.success ? roomDetails.role : "USER"
   return (
+    <>
+    <RoomSocketListner roomId={roomId} />
     <div className="flex flex-col gap-8 p-8">
       <RoomHeader room={roomDetails} />
 
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 lg:col-span-8 space-y-6">
-          <NowPlaying song={currentSong} roomId={roomId} user={{ role: ROLE  }} />
+          <NowPlaying song={currentSong} roomId={roomId} user={ROLE} />
 
           <AddSong roomId={roomId} />
 
@@ -51,5 +55,6 @@ export default async function Page({
         </div>
       </div>
     </div>
+    </>
   );
 }
