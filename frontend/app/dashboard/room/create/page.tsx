@@ -9,10 +9,13 @@ import {createRoom} from "@/actions/room.actions";
 import { CreateRoomInput, createRoomSchema } from "@/schemas/room/createRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getSocket, sendMessage } from "@/lib/websocket";
+import toast from "react-hot-toast";
 
 
 export default function CreateRoom() {
   const { data: session, status } = useSession();
+  const socket = getSocket();
   const {
     register,
     handleSubmit,
@@ -35,6 +38,15 @@ export default function CreateRoom() {
     setLoading(false);
     return;
   }
+
+    sendMessage(socket, {
+      type: "CREATE_ROOM",
+      userId : session?.user.id,
+      roomId: res.roomId,
+      userName : session?.user.name
+    });
+
+    toast("Room Created Successfully");
 
   router.push(`/dashboard/room/${res.roomId}`);
   };

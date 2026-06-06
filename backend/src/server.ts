@@ -1,49 +1,163 @@
-import express from 'express'
-import http from 'http'
-import WebSocket, { WebSocketServer } from 'ws'
-import roomRoutes from './routes/roomRoutes.js'
-import songRoutes from './routes/songRoutes.js'
-import streamRoutes from './routes/streamRoutes.js'
-import dotenv from 'dotenv'
-import cors from 'cors'
+import express from "express";
+import http from "http";
+import cors from "cors";
+import dotenv from "dotenv";
+import { WebSocketServer, WebSocket } from "ws";
 
-dotenv.config()
+import roomRoutes from "./routes/roomRoutes.js";
+import songRoutes from "./routes/songRoutes.js";
+import streamRoutes from "./routes/streamRoutes.js";
 
-const app = express()
+dotenv.config();
 
-app.use(express.json())
-app.use(cors())
+const app = express();
+app.use(express.json());
+app.use(cors());
 
-app.use('/room', roomRoutes)
-app.use('/song', songRoutes)
-app.use('/stream', streamRoutes)
+app.use("/room", roomRoutes);
+app.use("/song", songRoutes);
+app.use("/stream", streamRoutes);
 
-const server = http.createServer(app)
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
 
-const wss = new WebSocketServer({ server })
+type User = {
+  id: string;
+  name: string;
+};
 
-wss.on('connection', (ws) => {
-  console.log('Client connected')
+type Room = {
+  users: Map<string, User>;
+  sockets: Set<WebSocket>;
+};
 
-  ws.on('error', (err) => {
-    console.error('WebSocket error:', err)
-  })
+const rooms = new Map<string, Room>();
 
-  ws.on('message', (msg) => {
-    console.log('Message Received:', msg.toString())
+function getOrCreateRoom(roomId: string): Room {
+  let room = rooms.get(roomId);
 
-    ws.send(`Server received: ${msg}`)
-  })
+  if (!room) {
+    room = {
+      users: new Map(),
+      sockets: new Set(),
+    };
+    rooms.set(roomId, room);
+  }
 
-  ws.on('close', () => {
-    console.log('Client disconnected')
-  })
+  return room;
+}
 
-  ws.send('Hello Message from WebSocket Server')
-})
+function broadcastToRoom(roomId: string, payload: unknown) {
+  const room = rooms.get(roomId);
+  if (!room) return;
 
-const PORT = process.env.PORT || 8080
+  const message = JSON.stringify(payload);
+console.log("Room Broadcast  is ", room);
+  room.sockets.forEach((ws) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(message);
+    }
+  });
+}
+
+wss.on("connection", (ws) => {
+  console.log("✅ Client connected");
+
+  ws.send(
+    JSON.stringify({
+      type: "SERVER_WELCOME",
+      message: "Connected successfully",
+    })
+  );
+
+  ws.on("message", (msg) => {
+    try {
+      const data = JSON.parse(msg.toString());
+      console.log(data)
+      switch (data.type) {
+        case "JOIN_ROOM": {
+          const { roomId, userId, userName } = data;
+
+          const room = getOrCreateRoom(roomId);
+            console.log("Room Got is ", room)
+          room.users.set(userId, {
+            id: userId,
+            name: userName,
+          });
+
+          room.sockets.add(ws);
+          
+          (ws as any).roomId = roomId;
+          (ws as any).userId = userId;
+
+          console.log(`👤 ${userName} joined room ${roomId}`);
+
+          broadcastToRoom(roomId, {
+            type: "JOIN_ROOM_ACK",
+            userId,
+            userName,
+          });
+
+          break;
+        }
+
+        case "CREATE_ROOM":{
+          const {roomId , userId,userName} = data;
+
+          const room = getOrCreateRoom(roomId);
+
+          room.users.set(userId,{
+            id: userId,
+            name : userName
+          })
+
+          room.sockets.add(ws);
+          
+          (ws as any).roomId = roomId;
+          (ws as any).userId = userId;
+          
+          break;
+        }
+        case "HEALTH": {
+          ws.send(
+            JSON.stringify({
+              type: "HEALTH_RESPONSE",
+              message: "OK",
+            })
+          );
+          break;
+        }
+
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error("❌ Invalid message", err);
+    }
+  });
+
+  ws.on("close", () => {
+    const roomId = (ws as any).roomId;
+    const userId = (ws as any).userId;
+
+    if (!roomId) return;
+
+    const room = rooms.get(roomId);
+    if (!room) return;
+
+    room.sockets.delete(ws);
+    room.users.delete(userId);
+
+    console.log(`❌ User left room ${roomId}`);
+  });
+
+  ws.on("error", (err) => {
+    console.error("WebSocket error:", err);
+  });
+});
+
+const PORT = process.env.PORT || 8080;
 
 server.listen(PORT, () => {
-  console.log(`Server is listening on Port ${PORT}`)
-})
+  console.log(`🚀 Server running on ${PORT}`);
+});
