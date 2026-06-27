@@ -116,6 +116,23 @@ Songs with higher votes get prioritized in the playback queue, creating a commun
 
 ---
 
+## 🌐 Real-time Features (WebSockets & Notifications)
+
+Real-time communication features such as WebSocket-based updates and in-app notifications are currently being developed in a separate branch.
+
+> 🔀 **Branch:** `feature/websocket`
+
+### 🚀 What this branch includes:
+
+- 🔄 Real-time song queue synchronization across all users in a room  
+- 🔔 Live notifications for room events (user joins, votes, song changes, etc.)  
+- ⚡ WebSocket-based instant UI updates without page refresh or polling  
+- 🎧 Improved collaborative music experience with real-time interactions  
+
+> ⚠️ **Note:** These features are currently not part of the `main` branch and are under active development. They will be merged after testing and stabilization.
+
+---
+
 ## 🔮 Future Enhancements
 
 * Real-time socket integration
