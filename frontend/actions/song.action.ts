@@ -37,7 +37,6 @@ export async function getSong(roomId:string):  Promise<GetSongResponse> {
 
 }
 
-
 export async function upvoteSong(songId : string) : Promise<UpvoteSongResponse>{
   try {
 
@@ -87,6 +86,27 @@ export async function removeSong(
     return result.data;
   } catch (error) {
     console.log("Error while deleting Song", error);
+
+    return {
+      success: false,
+      error: "Something went wrong",
+    };
+  }
+}
+
+export async function  addSong(data :any){
+try {
+    const session = await getServerSession(authOptions)
+
+     const result = await axios.post(
+      `${process.env.BACKEND_URL}/song/addSong`, {url : data.url, creatorId : session?.user.id, roomId : data.roomId}
+    );
+    revalidatePath(`/room/${data.roomId}`);
+return result.data;
+  
+} catch (error) {
+  
+console.log("Error while Adding Song", error);
 
     return {
       success: false,

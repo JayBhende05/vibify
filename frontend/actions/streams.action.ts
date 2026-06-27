@@ -7,8 +7,6 @@ import { getServerSession } from "next-auth";
 
 export async function getUploadedSongs() : Promise<GetUploadedSongResponse> {
   try {
-    
-
     const session = await getServerSession(authOptions)
 
     const userID = session?.user.id
@@ -31,3 +29,6 @@ export async function getUploadedSongs() : Promise<GetUploadedSongResponse> {
     };
   }
 }
+
+
+

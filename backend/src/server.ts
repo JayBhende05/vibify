@@ -118,6 +118,80 @@ wss.on("connection", (ws) => {
           
           break;
         }
+        case "ADD_SONG":{
+          const {roomId , userId,userName , songName} = data;
+
+          const room = getOrCreateRoom(roomId);
+
+          room.users.set(userId,{
+            id: userId,
+            name : userName
+          })
+
+          room.sockets.add(ws);
+          
+          (ws as any).roomId = roomId;
+          (ws as any).userId = userId;
+
+          broadcastToRoom(roomId, {
+            type: "ADD_SONG_ACK",
+            userId,
+            userName,
+            songName
+          });
+
+          break;
+        }
+        case "VOTE_SONG":{
+          const {roomId , userId,userName , songName} = data;
+
+          const room = getOrCreateRoom(roomId);
+
+          room.users.set(userId,{
+            id: userId,
+            name : userName
+          })
+
+          room.sockets.add(ws);
+          
+          (ws as any).roomId = roomId;
+          (ws as any).userId = userId;
+
+          broadcastToRoom(roomId, {
+            type: "VOTE_SONG_ACK",
+            userId,
+            userName,
+            songName
+          });
+
+          break;
+        }
+        case "REMOVE_SONG":{
+          const {roomId , userId,userName , songName} = data;
+
+          const room = getOrCreateRoom(roomId);
+
+          room.users.set(userId,{
+            id: userId,
+            name : userName
+          })
+
+          room.sockets.add(ws);
+          
+          (ws as any).roomId = roomId;
+          (ws as any).userId = userId;
+
+          broadcastToRoom(roomId, {
+            type: "REMOVE_SONG_ACK",
+            userId,
+            userName,
+            songName
+          });
+
+          break;
+        }
+
+        
         case "HEALTH": {
           ws.send(
             JSON.stringify({

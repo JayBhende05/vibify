@@ -7,6 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { removeSong, upvoteSong } from "@/actions/song.action";
 import { useRouter } from "next/navigation";
 import { Song } from "@/types";
+import { getSocket, sendMessage } from "@/lib/websocket";
+import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 type Songs = { id: string;
     type: "Youtube" | "Spotify";
@@ -49,17 +52,43 @@ export default function SongQueue({
 } : SongQueueProps) {
 
   const router = useRouter();
-  // const userRole = useUserStore((state) => state.role);
+  const {data: session , status} = useSession()
+
+  const socket = getSocket();
 
 
+    const handleVote = async (songId: string, songName : string) => {
+    const res = await upvoteSong(songId);
+      if(!res.success){
+        toast.error("Song Vote Failed")
+      }
+      toast.success("Song Voted")
 
-    const handleVote = async (songId: string) => {
-    await upvoteSong(songId);
+         sendMessage(socket, {
+                type: "VOTE_SONG",
+                userId : session?.user.id,
+                roomId: roomId,
+                userName : session?.user.name,
+                songName : songName
+              });
+
     router.refresh(); 
   };
 
-  const handleRemoveSong = async (songId : string) => {
-    await removeSong(songId, roomId);
+  const handleRemoveSong = async (songId : string , songName : string) => {
+    const res =  await removeSong(songId, roomId);
+    if(!res.success){
+        toast.error("Song Remove Failed")
+      }
+      toast.success("Song Removed")
+
+         sendMessage(socket, {
+                type: "REMOVE_SONG",
+                userId : session?.user.id,
+                roomId: roomId,
+                userName : session?.user.name,
+                songName : songName
+              });
     router.refresh();
   }
 // console.log("Data in prosp is ", songs)
@@ -154,7 +183,7 @@ export default function SongQueue({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleVote(song.id)
+                      handleVote(song.id, song.title)
                     }}
                     className="px-4 py-2 rounded-xl bg-brand/10 hover:bg-brand text-brand-light hover:text-white transition-all active:scale-95 flex items-center gap-2 border border-brand/20 hover:border-brand shadow-lg hover:shadow-brand/20"
                   >
@@ -164,11 +193,11 @@ export default function SongQueue({
                     </span>
                   </button>
 
-                  {role === "HOST" && removeSong && (
+                  {role === "HOST" && handleRemoveSong && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        removeSong(song.id, roomId);
+                        handleRemoveSong(song.id, song.title)
                       }}
                       className="p-2.5 rounded-xl hover:bg-red-500/20 text-white/20 hover:text-red-400 transition-all group/trash"
                     >

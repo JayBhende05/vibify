@@ -6,17 +6,20 @@ import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRoomDetails } from "@/store/room";
 import axios from "axios";
-import {  useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { getSocket, sendMessage } from "@/lib/websocket";
+import { addSong } from "@/actions/song.action";
+import toast from "react-hot-toast";
 
 type FormValues = {
   url: string;
 };
 
-export default function AddSong({roomId } : {roomId : string}  ) {
+export default function AddSong({ roomId }: { roomId: string }) {
   const [isExpanding, setIsExpanding] = useState(false);
-  
+
   // console.log("Room id in add song", roomId )
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const {
     register,
     handleSubmit,
@@ -24,38 +27,40 @@ export default function AddSong({roomId } : {roomId : string}  ) {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>();
+  const socket = getSocket();
 
   const url = watch("url");
-const router = useRouter()
-  async function onSubmit(data: FormValues) {
-    console.log("FORM SUBMITTED:", data);
+  const router = useRouter();
 
-    if (!session?.user?.id) {
-      // console.log("No session");
-      return;
-    }
-
-    if (!roomId) {
-      // console.log("Jooin a Room");
+  async function onSubmit(formData: FormValues) {
+    if (!session?.user?.id && !roomId) {
       return;
     }
 
     try {
-      // console.log({
-      //   url: data.url,
-      //   userId: session.user.id,
-      //   roomId: roomId,
-      // })
-      const res = await axios.post("/api/stream", {
-        url: data.url,
-        creatorId: session.user.id,
+      const data = {
+        url: formData.url,
         roomId: roomId,
-      });
+      };
+      const res = await addSong(data);
+      console.log(res)
+      if (!res.success) {
+        toast.error("Error in Adding Song");
+        return;
+      }
+      toast.success("Song Added Successfully")
 
-      // console.log("✅ API success:", res.data);
-      reset()
+       sendMessage(socket, {
+          type: "ADD_SONG",
+          userId : session?.user.id,
+          roomId: res.roomId,
+          userName : session?.user.name,
+          songName : res.songName
+        });
+
+      reset();
     } catch (err) {
-      // console.error("❌ API error:", err);
+      console.error("Add Song API error:", err);
     }
   }
 
@@ -88,9 +93,7 @@ const router = useRouter()
 
         {/* Error */}
         {errors.url && (
-          <p className="text-red-500 text-xs mt-2 ml-4">
-            {errors.url.message}
-          </p>
+          <p className="text-red-500 text-xs mt-2 ml-4">{errors.url.message}</p>
         )}
 
         {/* Button */}

@@ -5,13 +5,12 @@ import { redirect, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Music, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import {createRoom} from "@/actions/room.actions";
+import { createRoom } from "@/actions/room.actions";
 import { CreateRoomInput, createRoomSchema } from "@/schemas/room/createRoom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getSocket, sendMessage } from "@/lib/websocket";
 import toast from "react-hot-toast";
-
 
 export default function CreateRoom() {
   const { data: session, status } = useSession();
@@ -21,38 +20,38 @@ export default function CreateRoom() {
     handleSubmit,
     formState: { errors },
   } = useForm<CreateRoomInput>({
-   resolver : zodResolver(createRoomSchema)
+    resolver: zodResolver(createRoomSchema),
   });
   const router = useRouter();
-  const user = useAuthStore((state) => state.user)
+  const user = useAuthStore((state) => state.user);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>("");
 
   const onSubmit = async (data: any) => {
     setLoading(true);
 
-  const res = await createRoom(data);
-// console.log("DAta is ", data , "User id" ,user?.id)
-  if (!res.success) {
-    setError(res.error?.toString() || "Failed to create room");
-    setLoading(false);
-    return;
-  }
+    const res = await createRoom(data);
+    // console.log("DAta is ", data , "User id" ,user?.id)
+    if (!res.success) {
+      setError(res.error?.toString() || "Failed to create room");
+      setLoading(false);
+      return;
+    }
 
     sendMessage(socket, {
       type: "CREATE_ROOM",
-      userId : session?.user.id,
+      userId: session?.user.id,
       roomId: res.roomId,
-      userName : session?.user.name
+      userName: session?.user.name,
     });
 
     toast("Room Created Successfully");
 
-  router.push(`/dashboard/room/${res.roomId}`);
+    router.push(`/dashboard/room/${res.roomId}`);
   };
 
   if (!session) {
-    return <div>Loading</div>
+    return <div>Loading</div>;
   }
   return (
     <div className="max-w-xl mx-auto mt-10 bg-white/5 border border-white/10 rounded-2xl p-8 shadow-lg">
